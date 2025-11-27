@@ -10,12 +10,12 @@ const Footer = () => {
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <div className="relative h-7 w-7 rounded-md bg-gradient-to-br from-insights-blue to-insights-navy flex items-center justify-center">
-                <span className="text-white font-bold text-sm">SI</span>
+                <span className="text-white font-bold text-xs">OST</span>
               </div>
-              <span className="font-bold text-xl">SimpleInsights.ai</span>
+              <span className="font-bold text-xl">Ortho Scan Tool</span>
             </div>
             <p className="text-sm text-muted-foreground max-w-xs">
-              Transform your complex documents into easily understandable insights with our user-friendly platform.
+              AI-powered orthodontic image analysis and treatment planning for dental professionals.
             </p>
           </div>
           
@@ -59,7 +59,7 @@ const Footer = () => {
         
         <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} SimpleInsights.ai. All rights reserved.
+            © {new Date().getFullYear()} Ortho Scan Tool. All rights reserved.
             <span className="ml-2 text-xs opacity-70">v{APP_VERSION}</span>
           </p>
           <div className="flex items-center gap-6">

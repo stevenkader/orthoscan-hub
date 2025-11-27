@@ -21,7 +21,7 @@ const Index = () => {
                 <span className="gradient-text"> Break Them Down—Fast.</span>
               </h1>
               <p className="text-xl text-muted-foreground mx-auto max-w-[700px]">
-                Legal contracts, medical reports, or documents in another language—SimpleInsights helps you instantly understand what matters, in plain language you can trust.
+                Legal contracts, medical reports, or documents in another language—Ortho Scan Tool helps you instantly understand what matters, in plain language you can trust.
               </p>
             </div>
             
@@ -161,7 +161,7 @@ const Index = () => {
                 Who can benefit?
               </h2>
               <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                SimpleInsights.ai helps people from all walks of life understand complex information.
+                Ortho Scan Tool helps people from all walks of life understand complex information.
               </p>
             </div>
           </div>
