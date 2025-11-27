@@ -58,10 +58,14 @@ const Footer = () => {
         </div>
         
         <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Ortho Scan Tool. All rights reserved.
-            <span className="ml-2 text-xs opacity-70">v{APP_VERSION}</span>
-          </p>
+          <div className="text-center md:text-left">
+            <p className="text-sm text-muted-foreground">
+              © {new Date().getFullYear()} Ortho Scan Tool. All rights reserved.
+            </p>
+            <p className="text-xs text-muted-foreground/70 mt-1">
+              v{APP_VERSION} — Last updated January 2025
+            </p>
+          </div>
           <div className="flex items-center gap-6">
             <a href="#" className="text-muted-foreground hover:text-foreground">
               <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
