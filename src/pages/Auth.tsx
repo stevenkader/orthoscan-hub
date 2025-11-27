@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import { getSupabaseClient } from "@/integrations/supabase/safeClient";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -18,20 +18,44 @@ const Auth = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Check if user is already logged in
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        navigate("/ortho-internal-stats");
-      }
-    });
+    let isMounted = true;
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) {
-        navigate("/ortho-internal-stats");
-      }
-    });
+    const initAuth = async () => {
+      try {
+        const supabase = await getSupabaseClient();
 
-    return () => subscription.unsubscribe();
+        // Check if user is already logged in
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session && isMounted) {
+          navigate("/ortho-internal-stats");
+        }
+
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+          if (session) {
+            navigate("/ortho-internal-stats");
+          }
+        });
+
+        return () => {
+          if (isMounted) {
+            subscription.unsubscribe();
+          }
+        };
+      } catch (error) {
+        console.error("Error initializing auth:", error);
+      }
+    };
+
+    const cleanupPromise = initAuth();
+
+    return () => {
+      isMounted = false;
+      cleanupPromise.then((cleanup) => {
+        if (typeof cleanup === "function") cleanup();
+      }).catch(() => {
+        /* ignore */
+      });
+    };
   }, [navigate]);
 
   const handleAuth = async (e: React.FormEvent) => {
@@ -39,6 +63,8 @@ const Auth = () => {
     setLoading(true);
 
     try {
+      const supabase = await getSupabaseClient();
+
       if (isLogin) {
         const { error } = await supabase.auth.signInWithPassword({
           email,
@@ -67,7 +93,7 @@ const Auth = () => {
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message,
+        description: error?.message || "Authentication failed. Please try again.",
         variant: "destructive",
       });
     } finally {

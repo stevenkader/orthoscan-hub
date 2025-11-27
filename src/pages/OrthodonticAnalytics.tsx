@@ -4,7 +4,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
+import { getSupabaseClient } from "@/integrations/supabase/safeClient";
 import { useToast } from "@/hooks/use-toast";
 
 const OrthodonticAnalytics = () => {
@@ -19,78 +19,111 @@ const OrthodonticAnalytics = () => {
   }, []);
 
   const checkAuth = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    
-    if (!session) {
-      navigate("/auth");
-      return;
-    }
-
-    // Check if user has admin role
-    const { data: roles, error } = await supabase
-      .from('user_roles')
-      .select('role')
-      .eq('user_id', session.user.id)
-      .eq('role', 'admin')
-      .single();
-
-    if (error || !roles) {
+    try {
+      const supabase = await getSupabaseClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        navigate("/auth");
+        return;
+      }
+  
+      // Check if user has admin role
+      const { data: roles, error } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", session.user.id)
+        .eq("role", "admin")
+        .single();
+  
+      if (error || !roles) {
+        toast({
+          title: "Access Denied",
+          description: "You need admin privileges to access this page",
+          variant: "destructive",
+        });
+        navigate("/");
+        return;
+      }
+  
+      setIsAdmin(true);
+      fetchStats();
+    } catch (error) {
+      console.error("Error checking auth:", error);
       toast({
-        title: "Access Denied",
-        description: "You need admin privileges to access this page",
+        title: "Error",
+        description: "Unable to verify your access right now. Please try again later.",
         variant: "destructive",
       });
       navigate("/");
-      return;
     }
-
-    setIsAdmin(true);
-    fetchStats();
   };
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate("/auth");
+    try {
+      const supabase = await getSupabaseClient();
+      await supabase.auth.signOut();
+      navigate("/auth");
+    } catch (error) {
+      console.error("Error during logout:", error);
+      toast({
+        title: "Error",
+        description: "Unable to log out right now. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const fetchStats = async () => {
     setIsLoading(true);
     try {
+      const supabase = await getSupabaseClient();
       const sevenDaysAgo = new Date();
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
       const { data, error } = await supabase
-        .from('orthodontic_usage_logs')
-        .select('*')
-        .gte('created_at', sevenDaysAgo.toISOString())
-        .order('created_at', { ascending: false });
+        .from("orthodontic_usage_logs")
+        .select("*")
+        .gte("created_at", sevenDaysAgo.toISOString())
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
 
       const daily: any = {};
-      data?.forEach(log => {
+      data?.forEach((log) => {
         const date = new Date(log.created_at).toLocaleDateString();
         if (!daily[date]) {
           daily[date] = { uploads: 0, analyses: 0, successes: 0, errors: 0 };
         }
-        if (log.event_type === 'upload') daily[date].uploads++;
-        if (log.event_type === 'analysis_start' || log.event_type === 'analysis_success' || log.event_type === 'analysis_error') {
+        if (log.event_type === "upload") daily[date].uploads++;
+        if (
+          log.event_type === "analysis_start" ||
+          log.event_type === "analysis_success" ||
+          log.event_type === "analysis_error"
+        ) {
           daily[date].analyses++;
         }
-        if (log.event_type === 'analysis_success') daily[date].successes++;
-        if (log.event_type === 'analysis_error') daily[date].errors++;
+        if (log.event_type === "analysis_success") daily[date].successes++;
+        if (log.event_type === "analysis_error") daily[date].errors++;
       });
 
-      const errorLogs = data?.filter(log => log.event_type === 'analysis_error' && log.error_message) || [];
+      const errorLogs = data?.filter(
+        (log) => log.event_type === "analysis_error" && log.error_message
+      ) || [];
 
       setStats({
         total: data?.length || 0,
         daily,
         recentLogs: data?.slice(0, 10) || [],
-        errorLogs: errorLogs.slice(0, 20) // Last 20 errors
+        errorLogs: errorLogs.slice(0, 20), // Last 20 errors
       });
     } catch (error) {
-      console.error('Error fetching stats:', error);
+      console.error("Error fetching stats:", error);
+      toast({
+        title: "Error",
+        description: "Unable to load analytics data right now.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
