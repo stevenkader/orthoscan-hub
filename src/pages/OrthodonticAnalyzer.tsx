@@ -251,19 +251,6 @@ const OrthodonticAnalyzer = () => {
             </p>
           </div>
 
-
-          {isAnalyzing && (
-            <Card className="mb-8">
-              <CardHeader>
-                <CardTitle>Analyzing X-Ray</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Progress value={progress} className="w-full h-4" />
-                <p className="text-sm text-center mt-2 text-muted-foreground">{progress}% complete</p>
-              </CardContent>
-            </Card>
-          )}
-
           <div className="grid md:grid-cols-2 gap-8">
             {/* Left: Image Viewer */}
             <Card>
@@ -333,6 +320,13 @@ const OrthodonticAnalyzer = () => {
                       <Scan className="mr-2 h-4 w-4" />
                       {isAnalyzing ? "Analyzing..." : "Generate Treatment Plan"}
                     </Button>
+
+                    {isAnalyzing && (
+                      <div className="space-y-2">
+                        <Progress value={progress} className="w-full h-4" />
+                        <p className="text-sm text-center text-muted-foreground">{progress}% complete</p>
+                      </div>
+                    )}
                   </>
                 )}
                 
