@@ -135,7 +135,7 @@ const OrthodonticAnalyzer = () => {
         setTreatmentPlan(data.analysis);
         toast({
           title: "Analysis complete",
-          description: "Your orthodontic treatment plan is ready",
+          description: "Your orthodontic evaluation report is ready",
         });
         setIsAnalyzing(false);
         
@@ -170,8 +170,8 @@ const OrthodonticAnalyzer = () => {
   const handleGeneratePDF = async () => {
     if (!treatmentPlan) {
       toast({
-        title: "No treatment plan",
-        description: "Please generate a treatment plan first",
+        title: "No evaluation report",
+        description: "Please generate an evaluation report first",
         variant: "destructive",
       });
       return;
@@ -250,13 +250,13 @@ const OrthodonticAnalyzer = () => {
         <div className="max-w-7xl mx-auto">
           <div className="mb-8 text-center">
             <h1 className="text-3xl md:text-4xl font-bold mb-2">
-              Orthodontic Panorex Analyzer
+              Orthodontic Panoramic X-ray Evaluation
             </h1>
             <p className="text-sm text-muted-foreground mb-4">
               For Dental Professionals Only
             </p>
             <p className="text-lg text-muted-foreground">
-              Upload a panoramic X-ray to receive a comprehensive orthodontic evaluation and treatment plan powered by AI.
+              Upload a panoramic X-ray to receive a structured AI-generated orthodontic evaluation including radiographic findings and clinical considerations.
             </p>
           </div>
 
@@ -267,27 +267,27 @@ const OrthodonticAnalyzer = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <p className="text-sm font-semibold">No images are stored.</p>
+                <p className="text-sm font-semibold">No image storage.</p>
                 <p className="text-sm text-muted-foreground">
-                  All uploads are processed in temporary memory and immediately deleted after analysis.
+                  All processing is performed in temporary memory and deleted after output.
                 </p>
               </div>
               <div className="space-y-2">
-                <p className="text-sm font-semibold">HIPAA-Friendly Workflow.</p>
+                <p className="text-sm font-semibold">HIPAA-friendly workflow.</p>
                 <p className="text-sm text-muted-foreground">
-                  This tool does not save, transmit, or retain any Protected Health Information (PHI). All processing is ephemeral and session-based.
+                  No PHI is stored, transmitted, or retained. Processing is session-based and ephemeral.
                 </p>
               </div>
               <div className="space-y-2">
-                <p className="text-sm font-semibold">Encrypted Communication.</p>
+                <p className="text-sm font-semibold">Encrypted end-to-end.</p>
                 <p className="text-sm text-muted-foreground">
-                  All data is sent over secure HTTPS/TLS 1.2+ connections.
+                  All communication uses HTTPS/TLS 1.2+.
                 </p>
               </div>
               <div className="space-y-2">
-                <p className="text-sm font-semibold">You remain the data controller.</p>
+                <p className="text-sm font-semibold">Clinician-controlled.</p>
                 <p className="text-sm text-muted-foreground">
-                  Only the clinician can access uploaded images and results during the session. Nothing is shared with third parties.
+                  Only the practitioner can access uploaded images and results during the session.
                 </p>
               </div>
             </CardContent>
@@ -304,19 +304,19 @@ const OrthodonticAnalyzer = () => {
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
                     <span className="text-xl font-bold text-primary">1</span>
                   </div>
-                  <p className="text-sm font-semibold">Upload a panoramic X-ray.</p>
+                  <p className="text-sm font-semibold">Upload a panoramic X-ray (JPG, PNG, PDF, HEIC — no DICOM required).</p>
                 </div>
                 <div className="space-y-2">
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
                     <span className="text-xl font-bold text-primary">2</span>
                   </div>
-                  <p className="text-sm font-semibold">AI analyzes radiographic markers.</p>
+                  <p className="text-sm font-semibold">AI analyzes orthodontic radiographic markers.</p>
                 </div>
                 <div className="space-y-2">
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
                     <span className="text-xl font-bold text-primary">3</span>
                   </div>
-                  <p className="text-sm font-semibold">Receive structured findings and clinical considerations.</p>
+                  <p className="text-sm font-semibold">Receive a structured clinical summary report.</p>
                 </div>
               </div>
             </CardContent>
@@ -326,7 +326,7 @@ const OrthodonticAnalyzer = () => {
             {/* Left: Image Viewer */}
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle>Panoramic X-Ray</CardTitle>
+                <CardTitle>Panoramic X-ray Upload</CardTitle>
                 {(selectedImages.length > 0 || treatmentPlan) && (
                   <Button
                     variant="outline"
@@ -358,7 +358,7 @@ const OrthodonticAnalyzer = () => {
                     onChange={handleImageUpload}
                   />
                   <p className="text-xs text-muted-foreground mt-4">
-                    Supported formats: JPG, PNG, PDF, HEIC
+                    Supported formats: JPG, PNG, PDF, HEIC.
                   </p>
                 </div>
 
@@ -389,7 +389,7 @@ const OrthodonticAnalyzer = () => {
                       size="lg"
                     >
                       <Scan className="mr-2 h-4 w-4" />
-                      {isAnalyzing ? "Analyzing..." : "Generate Treatment Plan"}
+                      {isAnalyzing ? "Analyzing..." : "Generate AI Evaluation"}
                     </Button>
 
                     {isAnalyzing && (
@@ -416,7 +416,7 @@ const OrthodonticAnalyzer = () => {
             {/* Right: Treatment Plan Output */}
             <Card ref={treatmentPlanCardRef}>
               <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle>Treatment Plan</CardTitle>
+                <CardTitle>AI Evaluation Report</CardTitle>
                 {treatmentPlan && (
                   <Button
                     onClick={handleGeneratePDF}
@@ -438,7 +438,7 @@ const OrthodonticAnalyzer = () => {
               <CardContent>
                 {!treatmentPlan ? (
                   <div className="text-center text-muted-foreground py-12">
-                    <p>Upload a panorex image and click "Generate Treatment Plan" to see the analysis</p>
+                    <p>Upload a panorex image and click Generate AI Evaluation to view the report.</p>
                   </div>
                 ) : (
                   <div 
@@ -457,11 +457,8 @@ const OrthodonticAnalyzer = () => {
           </div>
 
             <div className="mt-8 text-center text-sm text-muted-foreground">
-              <p className="mb-2">
-                <strong>Disclaimer:</strong> This AI-powered analysis is for informational purposes only and should not replace professional orthodontic consultation.
-              </p>
               <p>
-                The analysis is based solely on the radiographic image and may not capture all clinical details. Please consult with a licensed orthodontist for accurate diagnosis and treatment planning.
+                <strong>Disclaimer:</strong> This AI-assisted analysis is for informational use only. It is not a diagnosis and should be confirmed with a full clinical examination by a licensed orthodontist. The report is based solely on the uploaded panoramic image and may not capture all clinical details.
               </p>
             </div>
         </div>
@@ -487,7 +484,7 @@ const OrthodonticAnalyzer = () => {
             <div className="flex flex-col items-center justify-center py-8">
               <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
               <DialogDescription className="text-center">
-                Please wait while we generate your treatment plan PDF...
+                Please wait while we generate your evaluation report PDF...
               </DialogDescription>
             </div>
           ) : (
@@ -498,7 +495,7 @@ const OrthodonticAnalyzer = () => {
                 </svg>
               </div>
               <DialogDescription className="text-center mb-6">
-                Your treatment plan PDF has been successfully downloaded!
+                Your evaluation report PDF has been successfully downloaded!
               </DialogDescription>
               <Button 
                 onClick={() => {
