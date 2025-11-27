@@ -15,7 +15,7 @@ const Footer = () => {
               <span className="font-bold text-xl">Ortho Scan Tool</span>
             </div>
             <p className="text-sm text-muted-foreground max-w-xs">
-              AI-powered orthodontic image analysis and treatment planning for dental professionals.
+              AI-powered orthodontic image evaluation for dental professionals.
             </p>
           </div>
           
