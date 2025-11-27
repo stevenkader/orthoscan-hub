@@ -175,6 +175,9 @@ const OrthodonticAnalyzer = () => {
     setShowPdfDialog(true);
     setPdfSuccess(false);
     
+    // Log PDF export start
+    logUsageEvent('pdf_export_start');
+    
     try {
       // Prepare images array with captions for PDF
       const pdfImages = selectedImages.map((imgSrc, index) => {
@@ -197,11 +200,18 @@ const OrthodonticAnalyzer = () => {
 
       if (success) {
         setPdfSuccess(true);
+        // Log successful PDF export
+        logUsageEvent('pdf_export_success');
       } else {
         throw new Error("PDF generation failed");
       }
     } catch (error) {
       console.error("Error generating PDF:", error);
+      
+      // Log PDF export error
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      logUsageEvent('pdf_export_error', null, errorMessage);
+      
       setShowPdfDialog(false);
       toast({
         title: "Export failed",
