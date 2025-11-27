@@ -1,3 +1,9 @@
+
+# SimpleInsights.ai Robots.txt
+User-agent: *
+Allow: /
+
+# Specific Search Engine Bots
 User-agent: Googlebot
 Allow: /
 
@@ -10,5 +16,14 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
+# Disallow certain paths
 User-agent: *
-Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /internal/
+
+# Sitemap Location
+Sitemap: https://simpleinsights.ai/sitemap.xml
+
+# Crawl Delay (in seconds)
+Crawl-delay: 5
