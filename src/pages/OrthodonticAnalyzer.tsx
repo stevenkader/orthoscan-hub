@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Upload, Scan, RotateCcw, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { getSupabaseClient } from "@/integrations/supabase/safeClient";
 import { generatePDF } from "@/utils/pdf-export";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { validateImageFile } from "@/utils/fileValidation";
@@ -25,14 +25,15 @@ const getSessionId = () => {
 // Log usage event
 const logUsageEvent = async (eventType: string, metadata?: any, errorMessage?: string) => {
   try {
-    await supabase.from('orthodontic_usage_logs').insert({
+    const supabase = await getSupabaseClient();
+    await supabase.from("orthodontic_usage_logs").insert({
       event_type: eventType,
       session_id: getSessionId(),
       metadata: metadata || null,
       error_message: errorMessage || null,
     });
   } catch (error) {
-    console.error('Error logging usage:', error);
+    console.error("Error logging usage:", error);
   }
 };
 
@@ -136,11 +137,11 @@ const OrthodonticAnalyzer = () => {
       }
     }, 1200);
     
-    try {
-      // All images are already in base64 format in selectedImages
-      const { data, error } = await supabase.functions.invoke('analyze-orthodontic-image', {
-        body: { images: selectedImages }
-      });
+      try {
+        const supabase = await getSupabaseClient();
+        const { data, error } = await supabase.functions.invoke("analyze-orthodontic-image", {
+          body: { images: selectedImages },
+        });
 
       if (error) throw error;
 
