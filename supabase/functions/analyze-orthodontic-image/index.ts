@@ -235,16 +235,19 @@ Format your response in clean, semantic HTML:
   } catch (error) {
     console.error('Error in analyze-orthodontic-image function:', error);
     
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+    const errorStack = error instanceof Error ? error.stack : undefined;
+    
     // Log error event
     await supabase.from('orthodontic_usage_logs').insert({
       event_type: 'analysis_error',
       session_id: sessionId,
-      error_message: error.message,
-      metadata: { error_stack: error.stack }
+      error_message: errorMessage,
+      metadata: { error_stack: errorStack }
     });
 
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: errorMessage }),
       {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
