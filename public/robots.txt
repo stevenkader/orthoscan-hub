@@ -1,5 +1,5 @@
 
-# SimpleInsights.ai Robots.txt
+# Ortho Scan Tool Robots.txt
 User-agent: *
 Allow: /
 

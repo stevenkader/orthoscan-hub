@@ -17,9 +17,9 @@ const Navigation = () => {
         <div className="flex items-center gap-2">
           <Link to="/" className="flex items-center gap-2">
             <div className="relative h-7 w-7 rounded-md bg-gradient-to-br from-insights-blue to-insights-navy flex items-center justify-center">
-              <span className="text-white font-bold text-sm">SI</span>
+              <span className="text-white font-bold text-xs">OST</span>
             </div>
-            <span className="font-bold text-xl hidden sm:block">SimpleInsights.ai</span>
+            <span className="font-bold text-xl hidden sm:block">Ortho Scan Tool</span>
           </Link>
         </div>
 
