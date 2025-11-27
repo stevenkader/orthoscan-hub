@@ -332,7 +332,7 @@ const OrthodonticAnalyzer = () => {
                   asChild
                 >
                   <a href="mailto:steven@jaredco.com?subject=Orthodontic Analyzer feedback">
-                    Email Beta Test Feedback
+                    Email Support / Feedback
                   </a>
                 </Button>
               </CardContent>
