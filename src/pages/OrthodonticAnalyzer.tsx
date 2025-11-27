@@ -255,9 +255,18 @@ const OrthodonticAnalyzer = () => {
             <p className="text-sm text-muted-foreground mb-4">
               For Dental Professionals Only
             </p>
-            <p className="text-lg text-muted-foreground">
+            <p className="text-lg text-muted-foreground mb-6">
               Upload a panoramic X-ray to receive a structured AI-generated orthodontic evaluation including radiographic findings and clinical considerations.
             </p>
+            <Button 
+              size="lg"
+              onClick={() => {
+                document.getElementById("upload-section")?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+              className="mx-auto"
+            >
+              Upload Panoramic X-ray →
+            </Button>
           </div>
 
           {/* Security & Compliance Section */}
@@ -324,7 +333,8 @@ const OrthodonticAnalyzer = () => {
 
           <div className="grid md:grid-cols-2 gap-8">
             {/* Left: Image Viewer */}
-            <Card>
+            <div id="upload-section">
+              <Card>
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>Panoramic X-ray Upload</CardTitle>
                 {(selectedImages.length > 0 || treatmentPlan) && (
@@ -412,6 +422,7 @@ const OrthodonticAnalyzer = () => {
                 </Button>
               </CardContent>
             </Card>
+            </div>
 
             {/* Right: Treatment Plan Output */}
             <Card ref={treatmentPlanCardRef}>
