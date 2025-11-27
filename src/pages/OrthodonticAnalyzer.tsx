@@ -249,13 +249,78 @@ const OrthodonticAnalyzer = () => {
       <main className="flex-1 container py-8 md:py-12">
         <div className="max-w-7xl mx-auto">
           <div className="mb-8 text-center">
-            <h1 className="text-3xl md:text-4xl font-bold mb-4">
+            <h1 className="text-3xl md:text-4xl font-bold mb-2">
               Orthodontic Panorex Analyzer
             </h1>
+            <p className="text-sm text-muted-foreground mb-4">
+              For Dental Professionals Only
+            </p>
             <p className="text-lg text-muted-foreground">
               Upload a panoramic X-ray to receive a comprehensive orthodontic evaluation and treatment plan powered by AI.
             </p>
           </div>
+
+          {/* Security & Compliance Section */}
+          <Card className="mb-8 bg-muted/30">
+            <CardHeader>
+              <CardTitle className="text-xl">Security & Compliance</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <p className="text-sm font-semibold">No images are stored.</p>
+                <p className="text-sm text-muted-foreground">
+                  All uploads are processed in temporary memory and immediately deleted after analysis.
+                </p>
+              </div>
+              <div className="space-y-2">
+                <p className="text-sm font-semibold">HIPAA-Friendly Workflow.</p>
+                <p className="text-sm text-muted-foreground">
+                  This tool does not save, transmit, or retain any Protected Health Information (PHI). All processing is ephemeral and session-based.
+                </p>
+              </div>
+              <div className="space-y-2">
+                <p className="text-sm font-semibold">Encrypted Communication.</p>
+                <p className="text-sm text-muted-foreground">
+                  All data is sent over secure HTTPS/TLS 1.2+ connections.
+                </p>
+              </div>
+              <div className="space-y-2">
+                <p className="text-sm font-semibold">You remain the data controller.</p>
+                <p className="text-sm text-muted-foreground">
+                  Only the clinician can access uploaded images and results during the session. Nothing is shared with third parties.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* How It Works Section */}
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle className="text-xl text-center">How It Works</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid md:grid-cols-3 gap-6 text-center">
+                <div className="space-y-2">
+                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
+                    <span className="text-xl font-bold text-primary">1</span>
+                  </div>
+                  <p className="text-sm font-semibold">Upload a panoramic X-ray.</p>
+                </div>
+                <div className="space-y-2">
+                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
+                    <span className="text-xl font-bold text-primary">2</span>
+                  </div>
+                  <p className="text-sm font-semibold">AI analyzes radiographic markers.</p>
+                </div>
+                <div className="space-y-2">
+                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
+                    <span className="text-xl font-bold text-primary">3</span>
+                  </div>
+                  <p className="text-sm font-semibold">Receive structured findings and clinical considerations.</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
           <div className="grid md:grid-cols-2 gap-8">
             {/* Left: Image Viewer */}
