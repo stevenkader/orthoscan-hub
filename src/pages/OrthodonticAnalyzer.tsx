@@ -51,48 +51,32 @@ const OrthodonticAnalyzer = () => {
   const { toast } = useToast();
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    if (files.length === 0) return;
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-    // Check if adding these files would exceed 8 images
-    if (selectedImages.length + files.length > 8) {
+    // Validate the file
+    const validation = await validateImageFile(file);
+    if (!validation.valid) {
       toast({
-        title: "Too many images",
-        description: "You can upload a maximum of 8 images",
+        title: "Invalid file",
+        description: validation.error || "Invalid image file",
         variant: "destructive",
       });
       return;
     }
 
-    // Validate each file
-    for (const file of files) {
-      const validation = await validateImageFile(file);
-      if (!validation.valid) {
-        toast({
-          title: "Invalid file",
-          description: validation.error || "Invalid image file",
-          variant: "destructive",
-        });
-        return;
-      }
-    }
-
-    // Read all files and add them to state
-    files.forEach(file => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setSelectedImages(prev => [...prev, e.target?.result as string]);
-      };
-      reader.readAsDataURL(file);
-    });
+    // Read the file and set it as the only image
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setSelectedImages([e.target?.result as string]);
+    };
+    reader.readAsDataURL(file);
     
-    setImageFiles(prev => [...prev, ...files]);
+    setImageFiles([file]);
     setTreatmentPlan("");
     
     // Log upload event
-    files.forEach(file => {
-      logUsageEvent('upload', { fileType: file.type, fileSize: file.size });
-    });
+    logUsageEvent('upload', { fileType: file.type, fileSize: file.size });
   };
 
   const handleRemoveImage = (index: number) => {
@@ -103,8 +87,8 @@ const OrthodonticAnalyzer = () => {
   const handleAnalyze = async () => {
     if (imageFiles.length === 0) {
       toast({
-        title: "No images selected",
-        description: "Please upload at least one image first",
+        title: "No image selected",
+        description: "Please upload a panorex image first",
         variant: "destructive",
       });
       return;
@@ -291,48 +275,43 @@ const OrthodonticAnalyzer = () => {
                 <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
                   <Upload className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
                   <p className="text-muted-foreground mb-4">
-                    Upload up to 8 images (panoramic X-rays, intraoral photos, etc.)
+                    Upload one panoramic X-ray image
                   </p>
                   <label htmlFor="image-upload">
-                    <Button variant="default" asChild disabled={selectedImages.length >= 8}>
-                      <span>Select Images</span>
+                    <Button variant="default" asChild disabled={selectedImages.length > 0}>
+                      <span>Select Panorex</span>
                     </Button>
                   </label>
                   <input
                     id="image-upload"
                     type="file"
                     accept=".jpg,.jpeg,.png,.heic,.pdf"
-                    multiple
                     className="hidden"
                     onChange={handleImageUpload}
                   />
                   <p className="text-xs text-muted-foreground mt-4">
-                    Supported formats: JPG, PNG, PDF, HEIC • {selectedImages.length}/8 images
+                    Supported formats: JPG, PNG, PDF, HEIC
                   </p>
                 </div>
 
                 {selectedImages.length > 0 && (
                   <>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                      {selectedImages.map((image, index) => (
-                        <div key={index} className="relative aspect-square bg-muted rounded-lg overflow-hidden group">
-                          <img
-                            src={image}
-                            alt={`Upload ${index + 1}`}
-                            className="w-full h-full object-cover"
-                          />
-                          <button
-                            onClick={() => handleRemoveImage(index)}
-                            className="absolute top-2 right-2 bg-destructive text-destructive-foreground rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity"
-                            aria-label="Remove image"
-                          >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                              <line x1="18" y1="6" x2="6" y2="18"></line>
-                              <line x1="6" y1="6" x2="18" y2="18"></line>
-                            </svg>
-                          </button>
-                        </div>
-                      ))}
+                    <div className="relative aspect-[2/1] bg-muted rounded-lg overflow-hidden">
+                      <img
+                        src={selectedImages[0]}
+                        alt="Panorex X-ray"
+                        className="w-full h-full object-contain"
+                      />
+                      <button
+                        onClick={() => handleRemoveImage(0)}
+                        className="absolute top-2 right-2 bg-destructive text-destructive-foreground rounded-full p-1.5 hover:bg-destructive/90 transition-colors"
+                        aria-label="Remove image"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <line x1="18" y1="6" x2="6" y2="18"></line>
+                          <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                      </button>
                     </div>
                     
                     <Button
@@ -384,7 +363,7 @@ const OrthodonticAnalyzer = () => {
               <CardContent>
                 {!treatmentPlan ? (
                   <div className="text-center text-muted-foreground py-12">
-                    <p>Upload an image and click "Generate Treatment Plan" to see the analysis</p>
+                    <p>Upload a panorex image and click "Generate Treatment Plan" to see the analysis</p>
                   </div>
                 ) : (
                   <div 
