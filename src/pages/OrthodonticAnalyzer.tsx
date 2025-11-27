@@ -48,6 +48,7 @@ const OrthodonticAnalyzer = () => {
   const [pdfSuccess, setPdfSuccess] = useState(false);
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const treatmentPlanRef = useRef<HTMLDivElement>(null);
+  const treatmentPlanCardRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -140,6 +141,11 @@ const OrthodonticAnalyzer = () => {
         
         // Log successful analysis
         logUsageEvent('analysis_success');
+        
+        // Scroll to treatment plan
+        setTimeout(() => {
+          treatmentPlanCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
       }, 500);
     } catch (error) {
       console.error('Error analyzing image:', error);
@@ -343,7 +349,7 @@ const OrthodonticAnalyzer = () => {
             </Card>
 
             {/* Right: Treatment Plan Output */}
-            <Card>
+            <Card ref={treatmentPlanCardRef}>
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>Treatment Plan</CardTitle>
                 {treatmentPlan && (
