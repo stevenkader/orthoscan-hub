@@ -255,8 +255,11 @@ const OrthodonticAnalyzer = () => {
             <p className="text-sm text-muted-foreground mb-4">
               For Dental Professionals Only
             </p>
-            <p className="text-lg text-muted-foreground mb-6">
-              Upload a panoramic X-ray to receive a structured AI-generated orthodontic evaluation including radiographic findings and clinical considerations.
+            <p className="text-lg text-muted-foreground mb-4">
+              Upload a panoramic X-ray to receive a structured, clinician-oriented radiographic analysis with findings, interpretation, and clinical considerations.
+            </p>
+            <p className="text-base text-muted-foreground mb-6">
+              Designed to speed up case reviews, improve communication, and support your clinical decision-making.
             </p>
             <Button 
               size="lg"
@@ -270,6 +273,7 @@ const OrthodonticAnalyzer = () => {
           </div>
 
           {/* Security & Compliance Section */}
+          <div className="border-t border-border/40 my-8"></div>
           <Card className="mb-8 bg-muted/30">
             <CardHeader>
               <CardTitle className="text-xl">Security & Compliance</CardTitle>
@@ -368,7 +372,7 @@ const OrthodonticAnalyzer = () => {
                     onChange={handleImageUpload}
                   />
                   <p className="text-xs text-muted-foreground mt-4">
-                    Supported formats: JPG, PNG, PDF, HEIC.
+                    <span className="font-medium">Upload formats:</span> JPG, PNG, PDF, HEIC <span className="text-primary">(no DICOM required)</span>
                   </p>
                 </div>
 
