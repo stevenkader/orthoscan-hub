@@ -274,34 +274,40 @@ const OrthodonticAnalyzer = () => {
 
           {/* Security & Compliance Section */}
           <div className="border-t border-border/40 my-8"></div>
-          <Card className="mb-8 bg-muted/30">
+          <Card className="mb-8 bg-background">
             <CardHeader>
-              <CardTitle className="text-xl">Security & Compliance</CardTitle>
+              <CardTitle className="text-xl text-center">Security & Compliance</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <p className="text-sm font-semibold">No image storage.</p>
-                <p className="text-sm text-muted-foreground">
-                  All processing is performed in temporary memory and deleted after output.
-                </p>
-              </div>
-              <div className="space-y-2">
-                <p className="text-sm font-semibold">HIPAA-friendly workflow.</p>
-                <p className="text-sm text-muted-foreground">
-                  No PHI is stored, transmitted, or retained. Processing is session-based and ephemeral.
-                </p>
-              </div>
-              <div className="space-y-2">
-                <p className="text-sm font-semibold">Encrypted end-to-end.</p>
-                <p className="text-sm text-muted-foreground">
-                  All communication uses HTTPS/TLS 1.2+.
-                </p>
-              </div>
-              <div className="space-y-2">
-                <p className="text-sm font-semibold">Clinician-controlled.</p>
-                <p className="text-sm text-muted-foreground">
-                  Only the practitioner can access uploaded images and results during the session.
-                </p>
+            <CardContent>
+              <div className="grid md:grid-cols-2 gap-8">
+                <div className="space-y-6">
+                  <div className="space-y-2">
+                    <p className="text-sm font-semibold">No image storage.</p>
+                    <p className="text-sm text-muted-foreground">
+                      All processing is performed in temporary memory and deleted after output.
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-sm font-semibold">HIPAA-friendly workflow.</p>
+                    <p className="text-sm text-muted-foreground">
+                      No PHI is stored, transmitted, or retained. Processing is session-based and ephemeral.
+                    </p>
+                  </div>
+                </div>
+                <div className="space-y-6">
+                  <div className="space-y-2">
+                    <p className="text-sm font-semibold">Encrypted end-to-end.</p>
+                    <p className="text-sm text-muted-foreground">
+                      All communication uses HTTPS/TLS 1.2+.
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-sm font-semibold">Clinician-controlled.</p>
+                    <p className="text-sm text-muted-foreground">
+                      Only the practitioner can access uploaded images and results during the session.
+                    </p>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
