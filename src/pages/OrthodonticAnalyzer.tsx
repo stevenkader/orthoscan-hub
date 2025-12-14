@@ -247,72 +247,76 @@ const OrthodonticAnalyzer = () => {
     <div className="min-h-screen flex flex-col">
       <Navigation />
       <main className="flex-1 container py-8 md:py-12">
-        <div className="max-w-7xl mx-auto">
-          <div className="mb-8 text-center">
-            <h1 className="text-3xl md:text-4xl font-bold mb-2">
-              Orthodontic Panoramic X-ray Evaluation
+        <div className="max-w-4xl mx-auto">
+          
+          {/* SECTION 1 — HERO */}
+          <div className="mb-12 text-center">
+            <h1 className="text-3xl md:text-4xl font-bold mb-4">
+              AI-Assisted Panoramic Review for First Orthodontic Consults
             </h1>
-            <p className="text-sm text-muted-foreground mb-4">
-              For Dental Professionals Only
-            </p>
-            <p className="text-lg text-muted-foreground mb-4">
-              Upload a panoramic X-ray to receive a structured, clinician-oriented radiographic analysis with findings, interpretation, and clinical considerations.
-            </p>
-            <p className="text-base text-muted-foreground mb-6">
-              Designed to speed up case reviews, improve communication, and support your clinical decision-making.
+            <p className="text-lg text-muted-foreground mb-8 max-w-3xl mx-auto">
+              A clinician-controlled tool that highlights commonly evaluated panoramic features, supports early case review, and helps explain findings clearly to patients — before full diagnostics.
             </p>
             <Button 
               size="lg"
               onClick={() => {
                 document.getElementById("upload-section")?.scrollIntoView({ behavior: "smooth", block: "start" });
               }}
-              className="mx-auto"
+              className="mx-auto mb-4"
             >
-              Upload Panoramic X-ray →
+              Upload Panoramic X-ray
             </Button>
+            <p className="text-sm text-muted-foreground">
+              First-consult use • No image storage • Clinician-only
+            </p>
           </div>
 
-          {/* Security & Compliance Section */}
-          <div className="border-t border-border/40 my-8"></div>
-          <Card className="mb-8 bg-background">
+          {/* SECTION 2 — WHAT THIS IS / WHAT THIS ISN'T */}
+          <Card className="mb-8">
             <CardHeader>
-              <CardTitle className="text-xl text-center">Security & Compliance</CardTitle>
+              <CardTitle className="text-xl text-center">What This Is — And What It Isn't</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid md:grid-cols-2 gap-8">
-                <div className="space-y-6">
-                  <div className="space-y-2">
-                    <p className="text-sm font-semibold">No image storage.</p>
-                    <p className="text-sm text-muted-foreground">
-                      All processing is performed in temporary memory and deleted after output.
-                    </p>
-                  </div>
-                  <div className="space-y-2">
-                    <p className="text-sm font-semibold">HIPAA-friendly workflow.</p>
-                    <p className="text-sm text-muted-foreground">
-                      No PHI is stored, transmitted, or retained. Processing is session-based and ephemeral.
-                    </p>
-                  </div>
+                <div className="space-y-4">
+                  <h3 className="font-semibold text-base">What This Is:</h3>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    <li className="flex items-start">
+                      <span className="text-primary mr-2">•</span>
+                      An AI-assisted early case review tool
+                    </li>
+                    <li className="flex items-start">
+                      <span className="text-primary mr-2">•</span>
+                      A structured way to surface commonly evaluated orthodontic radiographic features
+                    </li>
+                    <li className="flex items-start">
+                      <span className="text-primary mr-2">•</span>
+                      A support tool for clear, consistent first-consult explanations
+                    </li>
+                  </ul>
                 </div>
-                <div className="space-y-6">
-                  <div className="space-y-2">
-                    <p className="text-sm font-semibold">Encrypted end-to-end.</p>
-                    <p className="text-sm text-muted-foreground">
-                      All communication uses HTTPS/TLS 1.2+.
-                    </p>
-                  </div>
-                  <div className="space-y-2">
-                    <p className="text-sm font-semibold">Clinician-controlled.</p>
-                    <p className="text-sm text-muted-foreground">
-                      Only the practitioner can access uploaded images and results during the session.
-                    </p>
-                  </div>
+                <div className="space-y-4">
+                  <h3 className="font-semibold text-base">What This Isn't:</h3>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    <li className="flex items-start">
+                      <span className="text-muted-foreground mr-2">•</span>
+                      Not a diagnosis
+                    </li>
+                    <li className="flex items-start">
+                      <span className="text-muted-foreground mr-2">•</span>
+                      Not an automated treatment plan
+                    </li>
+                    <li className="flex items-start">
+                      <span className="text-muted-foreground mr-2">•</span>
+                      Not a replacement for clinical judgment or full records
+                    </li>
+                  </ul>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* How It Works Section */}
+          {/* SECTION 3 — HOW IT WORKS */}
           <Card className="mb-8">
             <CardHeader>
               <CardTitle className="text-xl text-center">How It Works</CardTitle>
@@ -323,28 +327,48 @@ const OrthodonticAnalyzer = () => {
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
                     <span className="text-xl font-bold text-primary">1</span>
                   </div>
-                  <p className="text-sm font-semibold">Upload a panoramic X-ray (JPG, PNG, PDF, HEIC — no DICOM required).</p>
+                  <p className="text-sm">Upload a panoramic X-ray (JPG, PNG, PDF, HEIC — no DICOM required)</p>
                 </div>
                 <div className="space-y-2">
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
                     <span className="text-xl font-bold text-primary">2</span>
                   </div>
-                  <p className="text-sm font-semibold">AI analyzes orthodontic radiographic markers.</p>
+                  <p className="text-sm">AI highlights commonly evaluated orthodontic radiographic features for clinician review</p>
                 </div>
                 <div className="space-y-2">
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
                     <span className="text-xl font-bold text-primary">3</span>
                   </div>
-                  <p className="text-sm font-semibold">Receive a structured clinical summary report.</p>
+                  <p className="text-sm">Receive a structured first-consult clinical summary you review, refine, and explain</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <div className="grid md:grid-cols-2 gap-8">
+          {/* SECTION 4 — THE AI-ASSISTED REPORT */}
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle className="text-xl text-center">AI-Assisted First-Consult Radiographic Summary</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground text-center">
+                The generated summary is designed to support early evaluation and patient discussion, not definitive treatment decisions.
+              </p>
+              <div className="bg-muted/30 rounded-lg p-4 space-y-2">
+                <p className="text-sm"><span className="font-semibold">Findings</span> — observable radiographic features</p>
+                <p className="text-sm"><span className="font-semibold">Interpretation</span> — high-level, non-diagnostic context</p>
+                <p className="text-sm"><span className="font-semibold">Clinical Considerations</span> — items commonly reviewed during initial orthodontic evaluation</p>
+              </div>
+              <p className="text-xs text-muted-foreground text-center italic">
+                "This report supports clinician review and patient discussion and is not intended for definitive treatment planning."
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* UPLOAD & RESULTS SECTION */}
+          <div className="grid md:grid-cols-2 gap-8 mb-8" id="upload-section">
             {/* Left: Image Viewer */}
-            <div id="upload-section">
-              <Card>
+            <Card>
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>Panoramic X-ray Upload</CardTitle>
                 {(selectedImages.length > 0 || treatmentPlan) && (
@@ -409,7 +433,7 @@ const OrthodonticAnalyzer = () => {
                       size="lg"
                     >
                       <Scan className="mr-2 h-4 w-4" />
-                      {isAnalyzing ? "Analyzing..." : "Generate AI Evaluation"}
+                      {isAnalyzing ? "Analyzing..." : "Generate First-Consult Summary"}
                     </Button>
 
                     {isAnalyzing && (
@@ -420,24 +444,13 @@ const OrthodonticAnalyzer = () => {
                     )}
                   </>
                 )}
-                
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  asChild
-                >
-                  <a href="mailto:steven@jaredco.com?subject=Orthodontic Analyzer feedback">
-                    Email Support / Feedback
-                  </a>
-                </Button>
               </CardContent>
             </Card>
-            </div>
 
-            {/* Right: Treatment Plan Output */}
+            {/* Right: Report Output */}
             <Card ref={treatmentPlanCardRef}>
               <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle>AI Evaluation Report</CardTitle>
+                <CardTitle>First-Consult Summary</CardTitle>
                 {treatmentPlan && (
                   <Button
                     onClick={handleGeneratePDF}
@@ -459,7 +472,7 @@ const OrthodonticAnalyzer = () => {
               <CardContent>
                 {!treatmentPlan ? (
                   <div className="text-center text-muted-foreground py-12">
-                    <p>Upload a panorex image and click Generate AI Evaluation to view the report.</p>
+                    <p>Upload a panoramic X-ray and click Generate First-Consult Summary to view the report.</p>
                   </div>
                 ) : (
                   <div 
@@ -477,11 +490,85 @@ const OrthodonticAnalyzer = () => {
             </Card>
           </div>
 
-            <div className="mt-8 text-center text-sm text-muted-foreground">
-              <p>
-                <strong>Disclaimer:</strong> This AI-assisted analysis is for informational use only. It is not a diagnosis and should be confirmed with a full clinical examination by a licensed orthodontist. The report is based solely on the uploaded panoramic image and may not capture all clinical details.
-              </p>
-            </div>
+          {/* SECTION 5 — WHY ORTHODONTISTS USE ORTHO SCAN TOOL */}
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle className="text-xl text-center">Why Orthodontists Use Ortho Scan Tool</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className="grid md:grid-cols-2 gap-4">
+                <li className="flex items-start text-sm">
+                  <span className="text-primary mr-2">•</span>
+                  Shortens first-consult explanations
+                </li>
+                <li className="flex items-start text-sm">
+                  <span className="text-primary mr-2">•</span>
+                  Improves patient and parent understanding
+                </li>
+                <li className="flex items-start text-sm">
+                  <span className="text-primary mr-2">•</span>
+                  Creates consistent language across providers and staff
+                </li>
+                <li className="flex items-start text-sm">
+                  <span className="text-primary mr-2">•</span>
+                  Reduces repetitive explanations during busy consult days
+                </li>
+              </ul>
+            </CardContent>
+          </Card>
+
+          {/* SECTION 6 — SECURITY & CLINICAL SAFETY */}
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle className="text-xl text-center">Security & Clinical Safety</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className="grid md:grid-cols-2 gap-4">
+                <li className="flex items-start text-sm">
+                  <span className="text-muted-foreground mr-2">•</span>
+                  No image storage
+                </li>
+                <li className="flex items-start text-sm">
+                  <span className="text-muted-foreground mr-2">•</span>
+                  Session-based, ephemeral processing
+                </li>
+                <li className="flex items-start text-sm">
+                  <span className="text-muted-foreground mr-2">•</span>
+                  Encrypted transmission (HTTPS/TLS)
+                </li>
+                <li className="flex items-start text-sm">
+                  <span className="text-muted-foreground mr-2">•</span>
+                  HIPAA-friendly workflow
+                </li>
+                <li className="flex items-start text-sm">
+                  <span className="text-muted-foreground mr-2">•</span>
+                  Clinician-only access during active sessions
+                </li>
+              </ul>
+            </CardContent>
+          </Card>
+
+          {/* DISCLAIMER */}
+          <div className="text-center text-sm text-muted-foreground mb-8 p-4 border border-border/40 rounded-lg">
+            <p className="mb-2">
+              <strong>For dental professionals only.</strong>
+            </p>
+            <p>
+              This AI-assisted tool is for informational use only. It is not a diagnosis and does not replace clinical judgment, full records, or comprehensive examination. The summary is based solely on the uploaded panoramic image and may not capture all clinical details.
+            </p>
+          </div>
+
+          {/* SUPPORT LINK */}
+          <div className="text-center mb-4">
+            <Button
+              variant="outline"
+              asChild
+            >
+              <a href="mailto:steven@jaredco.com?subject=Ortho Scan Tool feedback">
+                Contact Support
+              </a>
+            </Button>
+          </div>
         </div>
       </main>
       <Footer />
