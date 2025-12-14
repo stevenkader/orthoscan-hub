@@ -254,8 +254,11 @@ const OrthodonticAnalyzer = () => {
             <h1 className="text-3xl md:text-4xl font-bold mb-4">
               AI-Assisted Panoramic Review for First Orthodontic Consults
             </h1>
-            <p className="text-lg text-muted-foreground mb-8 max-w-3xl mx-auto">
+            <p className="text-lg text-muted-foreground mb-2 max-w-3xl mx-auto">
               A clinician-controlled tool that highlights commonly evaluated panoramic features, supports early case review, and helps explain findings clearly to patients — before full diagnostics.
+            </p>
+            <p className="text-sm text-muted-foreground/80 mb-8">
+              Designed to fit naturally into existing orthodontic workflows.
             </p>
             <Button 
               size="lg"
@@ -333,7 +336,7 @@ const OrthodonticAnalyzer = () => {
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
                     <span className="text-xl font-bold text-primary">2</span>
                   </div>
-                  <p className="text-sm">AI highlights commonly evaluated orthodontic radiographic features for clinician review</p>
+                  <p className="text-sm">AI assists by highlighting commonly evaluated orthodontic radiographic features for clinician review</p>
                 </div>
                 <div className="space-y-2">
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
@@ -354,60 +357,80 @@ const OrthodonticAnalyzer = () => {
               <p className="text-sm text-muted-foreground text-center">
                 The generated summary is designed to support early evaluation and patient discussion, not definitive treatment decisions.
               </p>
-              <div className="bg-muted/30 rounded-lg p-4 space-y-2">
-                <p className="text-sm"><span className="font-semibold">Findings</span> — observable radiographic features</p>
-                <p className="text-sm"><span className="font-semibold">Interpretation</span> — high-level, non-diagnostic context</p>
-                <p className="text-sm"><span className="font-semibold">Clinical Considerations</span> — items commonly reviewed during initial orthodontic evaluation</p>
+              <div className="bg-muted/30 rounded-lg p-4 space-y-3">
+                <div className="flex items-start gap-3">
+                  <span className="font-semibold text-sm min-w-[140px]">Findings</span>
+                  <span className="text-sm text-muted-foreground">— observable radiographic features</span>
+                </div>
+                <div className="flex items-start gap-3">
+                  <span className="font-semibold text-sm min-w-[140px]">Interpretation</span>
+                  <span className="text-sm text-muted-foreground">— high-level, non-diagnostic context</span>
+                </div>
+                <div className="flex items-start gap-3">
+                  <span className="font-semibold text-sm min-w-[140px]">Clinical Considerations</span>
+                  <span className="text-sm text-muted-foreground">— items commonly reviewed during initial orthodontic evaluation</span>
+                </div>
               </div>
-              <p className="text-xs text-muted-foreground text-center italic">
-                "This report supports clinician review and patient discussion and is not intended for definitive treatment planning."
+              <p className="text-sm text-muted-foreground text-center mt-4">
+                This report supports clinician review and patient discussion and is not intended for definitive treatment planning.
               </p>
             </CardContent>
           </Card>
 
           {/* SAMPLE OUTPUT PREVIEW */}
-          <Card className="mb-8 border-primary/20">
-            <CardHeader className="pb-4">
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded">Sample Output</span>
-              </div>
-              <CardTitle className="text-xl text-center">Example First-Consult Summary</CardTitle>
-              <p className="text-sm text-muted-foreground text-center mt-2">
-                Below is an example of what the AI-generated summary looks like.
-              </p>
-            </CardHeader>
-            <CardContent>
-              <div className="bg-muted/20 rounded-lg p-6 border border-border/50">
-                <div className="prose prose-sm max-w-none dark:prose-invert">
-                  <h3 className="text-lg font-semibold mb-3 text-foreground">Findings</h3>
-                  <ul className="text-sm text-muted-foreground space-y-1.5 mb-5 list-disc pl-5">
-                    <li>Mixed dentition stage with several primary teeth still present</li>
-                    <li>Developing permanent teeth visible in various stages of eruption</li>
-                    <li>Apparent crowding in the lower anterior region</li>
-                    <li>Bilateral mandibular third molars developing</li>
-                    <li>No obvious radiolucent or radiopaque pathology noted</li>
-                  </ul>
-
-                  <h3 className="text-lg font-semibold mb-3 text-foreground">Interpretation</h3>
-                  <p className="text-sm text-muted-foreground mb-5">
-                    The panoramic radiograph suggests a developing dentition with potential space management considerations. The crowding observed in the lower anterior region may warrant monitoring as permanent teeth continue to erupt. Overall dental development appears within normal parameters for the patient's apparent age.
-                  </p>
-
-                  <h3 className="text-lg font-semibold mb-3 text-foreground">Clinical Considerations</h3>
-                  <ul className="text-sm text-muted-foreground space-y-1.5 list-disc pl-5">
-                    <li>Assess timing of primary tooth exfoliation vs. permanent eruption</li>
-                    <li>Evaluate arch length discrepancy and space requirements</li>
-                    <li>Consider serial extraction or space maintenance options if indicated</li>
-                    <li>Monitor third molar development and eruption path</li>
-                    <li>Correlate with clinical examination and additional records as needed</li>
-                  </ul>
+          <div className="mb-8 relative">
+            <div className="absolute -inset-1 bg-gradient-to-r from-muted/50 via-muted/30 to-muted/50 rounded-xl blur-sm"></div>
+            <Card className="relative border-2 border-dashed border-muted-foreground/20 bg-muted/5">
+              <CardHeader className="pb-4">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <span className="text-xs font-medium text-muted-foreground bg-muted px-3 py-1 rounded-full border border-border">
+                    Illustrative Example
+                  </span>
                 </div>
-              </div>
-              <p className="text-xs text-muted-foreground text-center italic mt-4">
-                This is a sample output for demonstration purposes only. Actual results will vary based on the uploaded panoramic X-ray.
-              </p>
-            </CardContent>
-          </Card>
+                <CardTitle className="text-xl text-center text-muted-foreground">Example First-Consult Summary</CardTitle>
+                <p className="text-sm text-muted-foreground/80 text-center mt-2">
+                  Below is an illustrative example — not patient-specific data.
+                </p>
+              </CardHeader>
+              <CardContent>
+                <div className="bg-background rounded-lg p-6 border border-border">
+                  <div className="space-y-5">
+                    <div>
+                      <h3 className="text-base font-semibold mb-2 text-foreground">Findings</h3>
+                      <ul className="text-sm text-muted-foreground space-y-1.5 list-disc pl-5">
+                        <li>Mixed dentition stage with several primary teeth still present</li>
+                        <li>Developing permanent teeth visible in various stages of eruption</li>
+                        <li>Apparent crowding in the lower anterior region</li>
+                        <li>Bilateral mandibular third molars developing</li>
+                        <li>No obvious radiolucent or radiopaque pathology noted</li>
+                      </ul>
+                    </div>
+
+                    <div>
+                      <h3 className="text-base font-semibold mb-2 text-foreground">Interpretation</h3>
+                      <p className="text-sm text-muted-foreground">
+                        The panoramic radiograph suggests a developing dentition with potential space management considerations. The crowding observed in the lower anterior region may warrant monitoring as permanent teeth continue to erupt. Overall dental development appears within normal parameters for the patient's apparent age.
+                      </p>
+                    </div>
+
+                    <div>
+                      <h3 className="text-base font-semibold mb-2 text-foreground">Clinical Considerations</h3>
+                      <ul className="text-sm text-muted-foreground space-y-1.5 list-disc pl-5">
+                        <li>Assess timing of primary tooth exfoliation vs. permanent eruption</li>
+                        <li>Evaluate arch length discrepancy and space requirements</li>
+                        <li>Consider serial extraction or space maintenance options if indicated</li>
+                        <li>Monitor third molar development and eruption path</li>
+                        <li>Correlate with clinical examination and additional records as needed</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground/70 text-center mt-4">
+                  Sample output for demonstration purposes. Actual results vary based on the uploaded image.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
 
           {/* UPLOAD & RESULTS SECTION */}
           <div className="grid md:grid-cols-2 gap-8 mb-8" id="upload-section">
@@ -539,25 +562,28 @@ const OrthodonticAnalyzer = () => {
             <CardHeader>
               <CardTitle className="text-xl text-center">Why Orthodontists Use Ortho Scan Tool</CardTitle>
             </CardHeader>
-            <CardContent>
-              <ul className="grid md:grid-cols-2 gap-4">
+            <CardContent className="space-y-4">
+              <ul className="grid md:grid-cols-2 gap-x-8 gap-y-3">
                 <li className="flex items-start text-sm">
-                  <span className="text-primary mr-2">•</span>
-                  Shortens first-consult explanations
+                  <span className="text-primary mr-3 leading-relaxed">•</span>
+                  <span>Shortens first-consult explanations</span>
                 </li>
                 <li className="flex items-start text-sm">
-                  <span className="text-primary mr-2">•</span>
-                  Improves patient and parent understanding
+                  <span className="text-primary mr-3 leading-relaxed">•</span>
+                  <span>Improves patient and parent understanding</span>
                 </li>
                 <li className="flex items-start text-sm">
-                  <span className="text-primary mr-2">•</span>
-                  Creates consistent language across providers and staff
+                  <span className="text-primary mr-3 leading-relaxed">•</span>
+                  <span>Creates consistent language across providers and staff</span>
                 </li>
                 <li className="flex items-start text-sm">
-                  <span className="text-primary mr-2">•</span>
-                  Reduces repetitive explanations during busy consult days
+                  <span className="text-primary mr-3 leading-relaxed">•</span>
+                  <span>Reduces repetitive explanations during busy consult days</span>
                 </li>
               </ul>
+              <p className="text-sm text-muted-foreground text-center pt-2">
+                Often used during initial consultations before full records are obtained.
+              </p>
             </CardContent>
           </Card>
 
@@ -567,26 +593,26 @@ const OrthodonticAnalyzer = () => {
               <CardTitle className="text-xl text-center">Security & Clinical Safety</CardTitle>
             </CardHeader>
             <CardContent>
-              <ul className="grid md:grid-cols-2 gap-4">
+              <ul className="grid md:grid-cols-2 gap-x-8 gap-y-3">
                 <li className="flex items-start text-sm">
-                  <span className="text-muted-foreground mr-2">•</span>
-                  No image storage
+                  <span className="text-muted-foreground mr-3 leading-relaxed">•</span>
+                  <span>No image storage</span>
                 </li>
                 <li className="flex items-start text-sm">
-                  <span className="text-muted-foreground mr-2">•</span>
-                  Session-based, ephemeral processing
+                  <span className="text-muted-foreground mr-3 leading-relaxed">•</span>
+                  <span>Session-based, ephemeral processing</span>
                 </li>
                 <li className="flex items-start text-sm">
-                  <span className="text-muted-foreground mr-2">•</span>
-                  Encrypted transmission (HTTPS/TLS)
+                  <span className="text-muted-foreground mr-3 leading-relaxed">•</span>
+                  <span>Encrypted transmission (HTTPS/TLS)</span>
                 </li>
                 <li className="flex items-start text-sm">
-                  <span className="text-muted-foreground mr-2">•</span>
-                  HIPAA-friendly workflow
+                  <span className="text-muted-foreground mr-3 leading-relaxed">•</span>
+                  <span>HIPAA-friendly workflow</span>
                 </li>
-                <li className="flex items-start text-sm">
-                  <span className="text-muted-foreground mr-2">•</span>
-                  Clinician-only access during active sessions
+                <li className="flex items-start text-sm md:col-span-2 md:justify-center">
+                  <span className="text-muted-foreground mr-3 leading-relaxed">•</span>
+                  <span>Clinician-only access during active sessions</span>
                 </li>
               </ul>
             </CardContent>
