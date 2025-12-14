@@ -365,6 +365,50 @@ const OrthodonticAnalyzer = () => {
             </CardContent>
           </Card>
 
+          {/* SAMPLE OUTPUT PREVIEW */}
+          <Card className="mb-8 border-primary/20">
+            <CardHeader className="pb-4">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded">Sample Output</span>
+              </div>
+              <CardTitle className="text-xl text-center">Example First-Consult Summary</CardTitle>
+              <p className="text-sm text-muted-foreground text-center mt-2">
+                Below is an example of what the AI-generated summary looks like.
+              </p>
+            </CardHeader>
+            <CardContent>
+              <div className="bg-muted/20 rounded-lg p-6 border border-border/50">
+                <div className="prose prose-sm max-w-none dark:prose-invert">
+                  <h3 className="text-lg font-semibold mb-3 text-foreground">Findings</h3>
+                  <ul className="text-sm text-muted-foreground space-y-1.5 mb-5 list-disc pl-5">
+                    <li>Mixed dentition stage with several primary teeth still present</li>
+                    <li>Developing permanent teeth visible in various stages of eruption</li>
+                    <li>Apparent crowding in the lower anterior region</li>
+                    <li>Bilateral mandibular third molars developing</li>
+                    <li>No obvious radiolucent or radiopaque pathology noted</li>
+                  </ul>
+
+                  <h3 className="text-lg font-semibold mb-3 text-foreground">Interpretation</h3>
+                  <p className="text-sm text-muted-foreground mb-5">
+                    The panoramic radiograph suggests a developing dentition with potential space management considerations. The crowding observed in the lower anterior region may warrant monitoring as permanent teeth continue to erupt. Overall dental development appears within normal parameters for the patient's apparent age.
+                  </p>
+
+                  <h3 className="text-lg font-semibold mb-3 text-foreground">Clinical Considerations</h3>
+                  <ul className="text-sm text-muted-foreground space-y-1.5 list-disc pl-5">
+                    <li>Assess timing of primary tooth exfoliation vs. permanent eruption</li>
+                    <li>Evaluate arch length discrepancy and space requirements</li>
+                    <li>Consider serial extraction or space maintenance options if indicated</li>
+                    <li>Monitor third molar development and eruption path</li>
+                    <li>Correlate with clinical examination and additional records as needed</li>
+                  </ul>
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground text-center italic mt-4">
+                This is a sample output for demonstration purposes only. Actual results will vary based on the uploaded panoramic X-ray.
+              </p>
+            </CardContent>
+          </Card>
+
           {/* UPLOAD & RESULTS SECTION */}
           <div className="grid md:grid-cols-2 gap-8 mb-8" id="upload-section">
             {/* Left: Image Viewer */}
