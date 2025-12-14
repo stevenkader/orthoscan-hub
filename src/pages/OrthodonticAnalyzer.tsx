@@ -283,35 +283,35 @@ const OrthodonticAnalyzer = () => {
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="space-y-4">
                   <h3 className="font-semibold text-base">What This Is:</h3>
-                  <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li className="flex items-start">
-                      <span className="text-primary mr-2">•</span>
-                      An AI-assisted early case review tool
+                  <ul className="space-y-3 text-sm text-muted-foreground">
+                    <li className="flex items-start gap-2.5">
+                      <span className="text-primary mt-0.5 flex-shrink-0">•</span>
+                      <span>An AI-assisted early case review tool</span>
                     </li>
-                    <li className="flex items-start">
-                      <span className="text-primary mr-2">•</span>
-                      A structured way to surface commonly evaluated orthodontic radiographic features
+                    <li className="flex items-start gap-2.5">
+                      <span className="text-primary mt-0.5 flex-shrink-0">•</span>
+                      <span>A structured way to surface commonly evaluated orthodontic radiographic features</span>
                     </li>
-                    <li className="flex items-start">
-                      <span className="text-primary mr-2">•</span>
-                      A support tool for clear, consistent first-consult explanations
+                    <li className="flex items-start gap-2.5">
+                      <span className="text-primary mt-0.5 flex-shrink-0">•</span>
+                      <span>A support tool for clear, consistent first-consult explanations</span>
                     </li>
                   </ul>
                 </div>
                 <div className="space-y-4">
                   <h3 className="font-semibold text-base">What This Isn't:</h3>
-                  <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li className="flex items-start">
-                      <span className="text-muted-foreground mr-2">•</span>
-                      Not a diagnosis
+                  <ul className="space-y-3 text-sm text-muted-foreground">
+                    <li className="flex items-start gap-2.5">
+                      <span className="text-muted-foreground/60 mt-0.5 flex-shrink-0">•</span>
+                      <span>Not a diagnosis</span>
                     </li>
-                    <li className="flex items-start">
-                      <span className="text-muted-foreground mr-2">•</span>
-                      Not an automated treatment plan
+                    <li className="flex items-start gap-2.5">
+                      <span className="text-muted-foreground/60 mt-0.5 flex-shrink-0">•</span>
+                      <span>Not an automated treatment plan</span>
                     </li>
-                    <li className="flex items-start">
-                      <span className="text-muted-foreground mr-2">•</span>
-                      Not a replacement for clinical judgment or full records
+                    <li className="flex items-start gap-2.5">
+                      <span className="text-muted-foreground/60 mt-0.5 flex-shrink-0">•</span>
+                      <span>Not a replacement for clinical judgment or full records</span>
                     </li>
                   </ul>
                 </div>
@@ -357,17 +357,17 @@ const OrthodonticAnalyzer = () => {
               <p className="text-sm text-muted-foreground text-center">
                 The generated summary is designed to support early evaluation and patient discussion, not definitive treatment decisions.
               </p>
-              <div className="bg-muted/30 rounded-lg p-4 space-y-3">
-                <div className="flex items-start gap-3">
-                  <span className="font-semibold text-sm min-w-[140px]">Findings</span>
+              <div className="bg-muted/30 rounded-lg p-5 space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-2">
+                  <span className="font-semibold text-sm text-foreground whitespace-nowrap">Findings</span>
                   <span className="text-sm text-muted-foreground">— observable radiographic features</span>
                 </div>
-                <div className="flex items-start gap-3">
-                  <span className="font-semibold text-sm min-w-[140px]">Interpretation</span>
+                <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-2">
+                  <span className="font-semibold text-sm text-foreground whitespace-nowrap">Interpretation</span>
                   <span className="text-sm text-muted-foreground">— high-level, non-diagnostic context</span>
                 </div>
-                <div className="flex items-start gap-3">
-                  <span className="font-semibold text-sm min-w-[140px]">Clinical Considerations</span>
+                <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-2">
+                  <span className="font-semibold text-sm text-foreground whitespace-nowrap">Clinical Considerations</span>
                   <span className="text-sm text-muted-foreground">— items commonly reviewed during initial orthodontic evaluation</span>
                 </div>
               </div>
@@ -384,7 +384,7 @@ const OrthodonticAnalyzer = () => {
               <CardHeader className="pb-4">
                 <div className="flex items-center justify-center gap-2 mb-2">
                   <span className="text-xs font-medium text-muted-foreground bg-muted px-3 py-1 rounded-full border border-border">
-                    Illustrative Example
+                    Illustrative First-Consult Example
                   </span>
                 </div>
                 <CardTitle className="text-xl text-center text-muted-foreground">Example First-Consult Summary</CardTitle>
@@ -563,21 +563,21 @@ const OrthodonticAnalyzer = () => {
               <CardTitle className="text-xl text-center">Why Orthodontists Use Ortho Scan Tool</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <ul className="grid md:grid-cols-2 gap-x-8 gap-y-3">
-                <li className="flex items-start text-sm">
-                  <span className="text-primary mr-3 leading-relaxed">•</span>
+              <ul className="grid md:grid-cols-2 gap-x-8 gap-y-4">
+                <li className="flex items-start gap-2.5 text-sm">
+                  <span className="text-primary mt-0.5 flex-shrink-0">•</span>
                   <span>Shortens first-consult explanations</span>
                 </li>
-                <li className="flex items-start text-sm">
-                  <span className="text-primary mr-3 leading-relaxed">•</span>
+                <li className="flex items-start gap-2.5 text-sm">
+                  <span className="text-primary mt-0.5 flex-shrink-0">•</span>
                   <span>Improves patient and parent understanding</span>
                 </li>
-                <li className="flex items-start text-sm">
-                  <span className="text-primary mr-3 leading-relaxed">•</span>
+                <li className="flex items-start gap-2.5 text-sm">
+                  <span className="text-primary mt-0.5 flex-shrink-0">•</span>
                   <span>Creates consistent language across providers and staff</span>
                 </li>
-                <li className="flex items-start text-sm">
-                  <span className="text-primary mr-3 leading-relaxed">•</span>
+                <li className="flex items-start gap-2.5 text-sm">
+                  <span className="text-primary mt-0.5 flex-shrink-0">•</span>
                   <span>Reduces repetitive explanations during busy consult days</span>
                 </li>
               </ul>
@@ -593,25 +593,25 @@ const OrthodonticAnalyzer = () => {
               <CardTitle className="text-xl text-center">Security & Clinical Safety</CardTitle>
             </CardHeader>
             <CardContent>
-              <ul className="grid md:grid-cols-2 gap-x-8 gap-y-3">
-                <li className="flex items-start text-sm">
-                  <span className="text-muted-foreground mr-3 leading-relaxed">•</span>
+              <ul className="grid md:grid-cols-2 gap-x-8 gap-y-4">
+                <li className="flex items-start gap-2.5 text-sm">
+                  <span className="text-muted-foreground/60 mt-0.5 flex-shrink-0">•</span>
                   <span>No image storage</span>
                 </li>
-                <li className="flex items-start text-sm">
-                  <span className="text-muted-foreground mr-3 leading-relaxed">•</span>
+                <li className="flex items-start gap-2.5 text-sm">
+                  <span className="text-muted-foreground/60 mt-0.5 flex-shrink-0">•</span>
                   <span>Session-based, ephemeral processing</span>
                 </li>
-                <li className="flex items-start text-sm">
-                  <span className="text-muted-foreground mr-3 leading-relaxed">•</span>
+                <li className="flex items-start gap-2.5 text-sm">
+                  <span className="text-muted-foreground/60 mt-0.5 flex-shrink-0">•</span>
                   <span>Encrypted transmission (HTTPS/TLS)</span>
                 </li>
-                <li className="flex items-start text-sm">
-                  <span className="text-muted-foreground mr-3 leading-relaxed">•</span>
+                <li className="flex items-start gap-2.5 text-sm">
+                  <span className="text-muted-foreground/60 mt-0.5 flex-shrink-0">•</span>
                   <span>HIPAA-friendly workflow</span>
                 </li>
-                <li className="flex items-start text-sm md:col-span-2 md:justify-center">
-                  <span className="text-muted-foreground mr-3 leading-relaxed">•</span>
+                <li className="flex items-start gap-2.5 text-sm md:col-span-2 md:justify-center">
+                  <span className="text-muted-foreground/60 mt-0.5 flex-shrink-0">•</span>
                   <span>Clinician-only access during active sessions</span>
                 </li>
               </ul>
