@@ -10,6 +10,7 @@ import { getSupabaseClient } from "@/integrations/supabase/safeClient";
 import { generatePDF } from "@/utils/pdf-export";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { validateImageFile } from "@/utils/fileValidation";
+import panorexExample from "@/assets/panorex-example.jpg";
 import { sanitizeHtml } from "@/utils/sanitizeHtml";
 
 // Generate or retrieve session ID for usage tracking
@@ -257,9 +258,21 @@ const OrthodonticAnalyzer = () => {
             <p className="text-lg text-muted-foreground mb-2 max-w-3xl mx-auto">
               A clinician-controlled tool that highlights commonly evaluated panoramic features, supports early case review, and helps explain findings clearly to patients — before full diagnostics.
             </p>
-            <p className="text-sm text-muted-foreground/80 mb-8">
+            <p className="text-sm text-muted-foreground/80 mb-6">
               Designed to fit naturally into existing orthodontic workflows.
             </p>
+            
+            {/* Example Panorex Image */}
+            <div className="mb-8 mx-auto max-w-2xl">
+              <div className="rounded-lg overflow-hidden border border-border/50 shadow-sm">
+                <img 
+                  src={panorexExample} 
+                  alt="Example panoramic dental X-ray" 
+                  className="w-full h-auto"
+                />
+              </div>
+            </div>
+            
             <Button 
               size="lg"
               onClick={() => {
