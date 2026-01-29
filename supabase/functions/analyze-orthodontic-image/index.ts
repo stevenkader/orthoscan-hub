@@ -87,6 +87,8 @@ EDITORIAL RULES (CRITICAL)
 
 • Do NOT restate the same finding in multiple sections
 
+• Once permanent dentition completeness is stated, do NOT restate tooth presence elsewhere
+
 • If a section adds no new value, OMIT it
 
 • Prefer omission over filler
@@ -94,6 +96,10 @@ EDITORIAL RULES (CRITICAL)
 • Do NOT list repeated "Not clearly visible" statements
 
 • Do NOT comment on structures that appear normal unless their appearance affects interpretation
+
+• Do NOT use broad phrases such as "no radiographic anomalies"
+
+• Negative findings must be specific (e.g., "no supernumerary teeth identified")
 
 • If something cannot be assessed reliably, either:
 
