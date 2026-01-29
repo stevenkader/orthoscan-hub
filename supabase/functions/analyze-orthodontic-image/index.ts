@@ -109,6 +109,8 @@ EDITORIAL RULES (CRITICAL)
 
 • Do NOT comment on structures that appear normal unless their appearance affects interpretation.
 
+• Do NOT include general "normal" or "no obvious pathology" statements unless a specific abnormality is being contrasted.
+
 • Do NOT state the absence of developmental delay or abnormality unless a specific concern is identified.
 
 • If something cannot be assessed reliably, either omit it or state the limitation once, concisely.
