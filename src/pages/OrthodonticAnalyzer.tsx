@@ -198,8 +198,8 @@ const OrthodonticAnalyzer = () => {
       });
 
       const success = await generatePDF({
-        title: "Orthodontic Treatment Plan",
-        fileName: "orthodontic-treatment-plan",
+        title: "Orthodontic Radiographic Review",
+        fileName: "orthodontic-radiographic-review",
         contentRef: treatmentPlanRef,
         content: treatmentPlan,
         images: pdfImages,
