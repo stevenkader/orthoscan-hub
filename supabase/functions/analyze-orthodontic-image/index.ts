@@ -77,6 +77,8 @@ NON-NEGOTIABLE DEFINITIONS (ORTHODONTIC CONTEXT)
 
 • NEVER infer eruption status for teeth unless clearly supported by imaging
 
+• Do NOT state eruption status for teeth other than third molars unless explicitly instructed
+
 ⸻
 
 EDITORIAL RULES (CRITICAL)
@@ -90,6 +92,8 @@ EDITORIAL RULES (CRITICAL)
 • Prefer omission over filler
 
 • Do NOT list repeated "Not clearly visible" statements
+
+• Do NOT comment on structures that appear normal unless their appearance affects interpretation
 
 • If something cannot be assessed reliably, either:
 
