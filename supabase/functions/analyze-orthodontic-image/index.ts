@@ -497,7 +497,7 @@ The orthodontist has 5 minutes before the consult. Get the inventory right. Make
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'claude-opus-4-5-20250514',
+        model: 'claude-opus-4-5-20251101',
         max_tokens: 4096,
         system: systemPrompt,
         messages: [
