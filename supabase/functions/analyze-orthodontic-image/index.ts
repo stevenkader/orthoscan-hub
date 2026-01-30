@@ -2,7 +2,7 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+const anthropicApiKey = Deno.env.get('ANTHROPIC_API_KEY');
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
@@ -465,54 +465,58 @@ The orthodontist has 5 minutes before the consult. Get the inventory right. Make
 
     const userPrompt = `Here are ${images.length} orthodontic images for evaluation. Please analyze all images together and generate the full structured report using the exact format and spacing rules in the system prompt.`;
 
-    // Build the content array with text and all images
-    const contentArray: any[] = [
-      {
-        type: 'text',
-        text: userPrompt
-      }
-    ];
-
-    // Add all images to the content
+    const claudeContent: any[] = [];
+    
+    // Add all images first
     images.forEach((imageUrl: string) => {
-      contentArray.push({
-        type: 'image_url',
-        image_url: {
-          url: imageUrl
-        }
-      });
+      // Extract base64 data and media type from data URL
+      const matches = imageUrl.match(/^data:([^;]+);base64,(.+)$/);
+      if (matches) {
+        claudeContent.push({
+          type: 'image',
+          source: {
+            type: 'base64',
+            media_type: matches[1],
+            data: matches[2]
+          }
+        });
+      }
+    });
+    
+    // Add the text prompt
+    claudeContent.push({
+      type: 'text',
+      text: userPrompt
     });
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
+        'x-api-key': anthropicApiKey!,
+        'anthropic-version': '2023-06-01',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4.1-2025-04-14',
+        model: 'claude-opus-4-20250514',
+        max_tokens: 4096,
+        system: systemPrompt,
         messages: [
           {
-            role: 'system',
-            content: systemPrompt
-          },
-          {
             role: 'user',
-            content: contentArray
+            content: claudeContent
           }
-        ],
-        max_completion_tokens: 2000
+        ]
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('OpenAI API error:', errorText);
-      throw new Error(`OpenAI API error: ${response.status}`);
+      console.error('Anthropic API error:', errorText);
+      throw new Error(`Anthropic API error: ${response.status}`);
     }
 
     const data = await response.json();
-    const analysis = data.choices[0].message.content;
+    const analysis = data.content[0].text;
 
     // Remove markdown code block delimiters
     const cleanedAnalysis = analysis
