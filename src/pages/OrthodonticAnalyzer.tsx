@@ -52,7 +52,7 @@ const OrthodonticAnalyzer = () => {
   const treatmentPlanCardRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, slotIndex: number) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -67,30 +67,52 @@ const OrthodonticAnalyzer = () => {
       return;
     }
 
-    // Read the file and set it as the only image
+    // Read the file and add to the specific slot
     const reader = new FileReader();
-    reader.onload = (e) => {
-      setSelectedImages([e.target?.result as string]);
+    reader.onload = (loadEvent) => {
+      const result = loadEvent.target?.result as string;
+      setSelectedImages(prev => {
+        const newImages = [...prev];
+        newImages[slotIndex] = result;
+        return newImages;
+      });
     };
     reader.readAsDataURL(file);
     
-    setImageFiles([file]);
+    setImageFiles(prev => {
+      const newFiles = [...prev];
+      newFiles[slotIndex] = file;
+      return newFiles;
+    });
     setTreatmentPlan("");
     
     // Log upload event
-    logUsageEvent('upload', { fileType: file.type, fileSize: file.size });
+    logUsageEvent('upload', { fileType: file.type, fileSize: file.size, slotIndex });
   };
 
   const handleRemoveImage = (index: number) => {
-    setSelectedImages(prev => prev.filter((_, i) => i !== index));
-    setImageFiles(prev => prev.filter((_, i) => i !== index));
+    setSelectedImages(prev => {
+      const newImages = [...prev];
+      newImages[index] = '';
+      return newImages;
+    });
+    setImageFiles(prev => {
+      const newFiles = [...prev];
+      newFiles[index] = undefined as unknown as File;
+      return newFiles;
+    });
   };
 
+  // Get only the valid images for analysis
+  const getValidImages = () => selectedImages.filter(img => img && img.length > 0);
+  const getValidImageCount = () => getValidImages().length;
+
   const handleAnalyze = async () => {
-    if (imageFiles.length === 0) {
+    const validImages = getValidImages();
+    if (validImages.length === 0) {
       toast({
         title: "No image selected",
-        description: "Please upload a panorex image first",
+        description: "Please upload at least one panoramic image",
         variant: "destructive",
       });
       return;
@@ -126,7 +148,7 @@ const OrthodonticAnalyzer = () => {
       try {
         const supabase = await getSupabaseClient();
         const { data, error } = await supabase.functions.invoke("analyze-orthodontic-image", {
-          body: { images: selectedImages },
+          body: { images: getValidImages() },
         });
 
       if (error) throw error;
@@ -231,7 +253,7 @@ const OrthodonticAnalyzer = () => {
   };
 
   const handleClearAll = () => {
-    setSelectedImages([]);
+    setSelectedImages(['', '']);
     setImageFiles([]);
     setTreatmentPlan("");
     setProgress(0);
@@ -451,7 +473,7 @@ const OrthodonticAnalyzer = () => {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>Panoramic X-ray Upload</CardTitle>
-                {(selectedImages.length > 0 || treatmentPlan) && (
+                {(getValidImageCount() > 0 || treatmentPlan) && (
                   <Button
                     variant="outline"
                     size="sm"
@@ -464,56 +486,70 @@ const OrthodonticAnalyzer = () => {
                 )}
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
-                  <Upload className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                  <p className="text-muted-foreground mb-4">
-                    Upload one panoramic X-ray image
-                  </p>
-                  <label htmlFor="image-upload">
-                    <Button variant="default" asChild disabled={selectedImages.length > 0}>
-                      <span>Select Panorex</span>
-                    </Button>
-                  </label>
-                  <input
-                    id="image-upload"
-                    type="file"
-                    accept=".jpg,.jpeg,.png,.heic,.pdf"
-                    className="hidden"
-                    onChange={handleImageUpload}
-                  />
-                  <p className="text-xs text-muted-foreground mt-4">
-                    <span className="font-medium">Upload formats:</span> JPG, PNG, PDF, HEIC <span className="text-primary">(no DICOM required)</span>
-                  </p>
+                <p className="text-sm text-muted-foreground text-center">
+                  Upload up to 2 images for analysis
+                </p>
+                
+                {/* Two upload slots */}
+                <div className="grid grid-cols-2 gap-4">
+                  {[0, 1].map((slotIndex) => (
+                    <div key={slotIndex} className="space-y-2">
+                      <p className="text-xs font-medium text-muted-foreground text-center">
+                        {slotIndex === 0 ? "Image 1 (Primary)" : "Image 2 (Optional)"}
+                      </p>
+                      {selectedImages[slotIndex] ? (
+                        <div className="relative aspect-square bg-muted rounded-lg overflow-hidden border border-border">
+                          <img
+                            src={selectedImages[slotIndex]}
+                            alt={`Uploaded image ${slotIndex + 1}`}
+                            className="w-full h-full object-contain"
+                          />
+                          <button
+                            onClick={() => handleRemoveImage(slotIndex)}
+                            className="absolute top-2 right-2 bg-destructive text-destructive-foreground rounded-full p-1.5 hover:bg-destructive/90 transition-colors"
+                            aria-label="Remove image"
+                            disabled={isAnalyzing}
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <line x1="18" y1="6" x2="6" y2="18"></line>
+                              <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                          </button>
+                        </div>
+                      ) : (
+                        <label htmlFor={`image-upload-${slotIndex}`} className="block">
+                          <div className="aspect-square border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-primary/50 hover:bg-muted/50 transition-colors">
+                            <Upload className="h-8 w-8 text-muted-foreground mb-2" />
+                            <span className="text-xs text-muted-foreground">Click to upload</span>
+                          </div>
+                          <input
+                            id={`image-upload-${slotIndex}`}
+                            type="file"
+                            accept=".jpg,.jpeg,.png,.heic,.pdf"
+                            className="hidden"
+                            onChange={(e) => handleImageUpload(e, slotIndex)}
+                            disabled={isAnalyzing}
+                          />
+                        </label>
+                      )}
+                    </div>
+                  ))}
                 </div>
 
-                {selectedImages.length > 0 && (
+                <p className="text-xs text-muted-foreground text-center">
+                  <span className="font-medium">Upload formats:</span> JPG, PNG, PDF, HEIC <span className="text-primary">(no DICOM required)</span>
+                </p>
+
+                {getValidImageCount() > 0 && (
                   <>
-                    <div className="relative aspect-[2/1] bg-muted rounded-lg overflow-hidden">
-                      <img
-                        src={selectedImages[0]}
-                        alt="Panorex X-ray"
-                        className="w-full h-full object-contain"
-                      />
-                      <button
-                        onClick={() => handleRemoveImage(0)}
-                        className="absolute top-2 right-2 bg-destructive text-destructive-foreground rounded-full p-1.5 hover:bg-destructive/90 transition-colors"
-                        aria-label="Remove image"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <line x1="18" y1="6" x2="6" y2="18"></line>
-                          <line x1="6" y1="6" x2="18" y2="18"></line>
-                        </svg>
-                      </button>
-                    </div>
-                    
                     <Button
                       onClick={handleAnalyze}
-                      disabled={isAnalyzing || selectedImages.length === 0}
+                      disabled={isAnalyzing || getValidImageCount() === 0}
                       className="w-full"
                       size="lg"
                     >
                       <Scan className="mr-2 h-4 w-4" />
-                      {isAnalyzing ? "Analyzing..." : "Generate First-Consult Summary"}
+                      {isAnalyzing ? "Analyzing..." : `Analyze ${getValidImageCount()} Image${getValidImageCount() > 1 ? 's' : ''}`}
                     </Button>
 
                     {isAnalyzing && (
