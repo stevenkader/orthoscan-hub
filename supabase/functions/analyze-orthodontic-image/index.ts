@@ -468,16 +468,24 @@ The orthodontist has 5 minutes before the consult. Get the inventory right. Make
     const claudeContent: any[] = [];
     
     // Add all images first
-    images.forEach((imageUrl: string) => {
+    images.forEach((imageUrl: string, index: number) => {
       // Extract base64 data and media type from data URL
       const matches = imageUrl.match(/^data:([^;]+);base64,(.+)$/);
       if (matches) {
+        const mediaType = matches[1];
+        const imageBase64 = matches[2];
+        
+        // Log image details for debugging
+        console.log(`Image ${index + 1} - Size (base64 chars):`, imageBase64.length);
+        console.log(`Image ${index + 1} - Media type:`, mediaType);
+        console.log(`Image ${index + 1} - First 100 chars:`, imageBase64.substring(0, 100));
+        
         claudeContent.push({
           type: 'image',
           source: {
             type: 'base64',
-            media_type: matches[1],
-            data: matches[2]
+            media_type: mediaType,
+            data: imageBase64
           }
         });
       }
