@@ -107,6 +107,34 @@ const OrthodonticAnalyzer = () => {
   const getValidImages = () => selectedImages.filter(img => img && img.length > 0);
   const getValidImageCount = () => getValidImages().length;
 
+  const invokeAnalyzeWithRetry = async (images: string[]) => {
+    const supabase = await getSupabaseClient();
+    const maxAttempts = 2;
+
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      const { data, error } = await supabase.functions.invoke("analyze-orthodontic-image", {
+        body: { images },
+      });
+
+      if (!error) return { data, error: null as null };
+
+      const message = (error as any)?.message ?? String(error);
+      const isTransient =
+        /Load failed/i.test(message) ||
+        /Failed to send a request/i.test(message) ||
+        /network/i.test(message);
+
+      if (!isTransient || attempt === maxAttempts) {
+        return { data: null as any, error };
+      }
+
+      // brief backoff before retry
+      await new Promise((r) => setTimeout(r, 1200 * attempt));
+    }
+
+    return { data: null as any, error: new Error("Unknown error") as any };
+  };
+
   const handleAnalyze = async () => {
     const validImages = getValidImages();
     if (validImages.length === 0) {
@@ -146,10 +174,7 @@ const OrthodonticAnalyzer = () => {
     }, 1200);
     
       try {
-        const supabase = await getSupabaseClient();
-        const { data, error } = await supabase.functions.invoke("analyze-orthodontic-image", {
-          body: { images: getValidImages() },
-        });
+        const { data, error } = await invokeAnalyzeWithRetry(getValidImages());
 
       if (error) throw error;
 
@@ -180,10 +205,10 @@ const OrthodonticAnalyzer = () => {
       // Log error
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       logUsageEvent('analysis_error', null, errorMessage);
-      
+
       toast({
         title: "Analysis failed",
-        description: "There was an error analyzing your image. Please try again.",
+        description: `There was an error analyzing your image. Please try again. (${errorMessage})`,
         variant: "destructive",
       });
       setIsAnalyzing(false);
