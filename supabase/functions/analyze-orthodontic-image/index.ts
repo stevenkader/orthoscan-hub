@@ -23,8 +23,6 @@ async function fetchWithRetry(
   maxRetries = 3,
   baseDelay = 2000
 ): Promise<Response> {
-  let lastError: Error | null = null;
-  
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     const response = await fetch(url, options);
     
@@ -35,7 +33,8 @@ async function fetchWithRetry(
     
     // Retryable errors: 429 (rate limit), 529 (overloaded), 5xx (server errors)
     if (response.status === 429 || response.status === 529 || response.status >= 500) {
-      const errorText = await response.text();
+      // Clone response before consuming body for logging
+      const errorText = await response.clone().text();
       console.log(`API returned ${response.status}, attempt ${attempt + 1}/${maxRetries}. Error: ${errorText.substring(0, 200)}`);
       
       if (attempt < maxRetries - 1) {
@@ -46,14 +45,15 @@ async function fetchWithRetry(
         continue;
       }
       
-      lastError = new Error(`API error after ${maxRetries} attempts: ${response.status}`);
+      // Last attempt failed - throw error with details
+      throw new Error(`API error after ${maxRetries} attempts: ${response.status} - ${errorText.substring(0, 200)}`);
     }
     
-    // Non-retryable error
+    // Non-retryable error - return as-is
     return response;
   }
   
-  throw lastError || new Error('Max retries exceeded');
+  throw new Error('Max retries exceeded');
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
