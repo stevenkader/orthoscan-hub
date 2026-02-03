@@ -20,8 +20,8 @@ const corsHeaders = {
 async function fetchWithRetry(
   url: string, 
   options: RequestInit, 
-  maxRetries = 3,
-  baseDelay = 2000
+  maxRetries = 5,
+  baseDelay = 3000
 ): Promise<Response> {
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     const response = await fetch(url, options);
@@ -38,15 +38,19 @@ async function fetchWithRetry(
       console.log(`API returned ${response.status}, attempt ${attempt + 1}/${maxRetries}. Error: ${errorText.substring(0, 200)}`);
       
       if (attempt < maxRetries - 1) {
-        // Exponential backoff with jitter
-        const delay = baseDelay * Math.pow(2, attempt) + Math.random() * 1000;
+        // Exponential backoff with jitter - longer delays for overload
+        const multiplier = response.status === 529 ? 2.5 : 2;
+        const delay = baseDelay * Math.pow(multiplier, attempt) + Math.random() * 2000;
         console.log(`Waiting ${Math.round(delay)}ms before retry...`);
         await new Promise(resolve => setTimeout(resolve, delay));
         continue;
       }
       
-      // Last attempt failed - throw error with details
-      throw new Error(`API error after ${maxRetries} attempts: ${response.status} - ${errorText.substring(0, 200)}`);
+      // Last attempt failed - throw user-friendly error
+      if (response.status === 529) {
+        throw new Error('The AI service is currently experiencing high demand. Please wait a minute and try again.');
+      }
+      throw new Error(`Analysis service temporarily unavailable (${response.status}). Please try again in a few moments.`);
     }
     
     // Non-retryable error - return as-is
