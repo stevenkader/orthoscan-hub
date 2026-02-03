@@ -2,7 +2,8 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-const anthropicApiKey = Deno.env.get('ANTHROPIC_API_KEY');
+// Use Lovable AI Gateway with Gemini Pro for multimodal analysis
+const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
@@ -15,46 +16,74 @@ const corsHeaders = {
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// Retry logic for transient API errors (429, 529)
+// Call Lovable AI Gateway with Gemini Pro for multimodal analysis
 // ═══════════════════════════════════════════════════════════════════════════════
-async function fetchWithRetry(
-  url: string, 
-  options: RequestInit, 
-  maxRetries = 5,
-  baseDelay = 3000
-): Promise<Response> {
+async function callGeminiVision(
+  systemPrompt: string,
+  userContent: Array<{ type: string; text?: string; image_url?: { url: string } }>,
+  maxRetries = 3
+): Promise<string> {
+  if (!LOVABLE_API_KEY) {
+    throw new Error('LOVABLE_API_KEY is not configured');
+  }
+
   for (let attempt = 0; attempt < maxRetries; attempt++) {
-    const response = await fetch(url, options);
-    
-    // Success or client error (4xx except 429) - don't retry
-    if (response.ok || (response.status >= 400 && response.status < 500 && response.status !== 429)) {
-      return response;
-    }
-    
-    // Retryable errors: 429 (rate limit), 529 (overloaded), 5xx (server errors)
-    if (response.status === 429 || response.status === 529 || response.status >= 500) {
-      // Clone response before consuming body for logging
-      const errorText = await response.clone().text();
-      console.log(`API returned ${response.status}, attempt ${attempt + 1}/${maxRetries}. Error: ${errorText.substring(0, 200)}`);
+    try {
+      console.log(`Gemini API call attempt ${attempt + 1}/${maxRetries}...`);
       
-      if (attempt < maxRetries - 1) {
-        // Exponential backoff with jitter - longer delays for overload
-        const multiplier = response.status === 529 ? 2.5 : 2;
-        const delay = baseDelay * Math.pow(multiplier, attempt) + Math.random() * 2000;
-        console.log(`Waiting ${Math.round(delay)}ms before retry...`);
-        await new Promise(resolve => setTimeout(resolve, delay));
-        continue;
+      const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'google/gemini-2.5-pro',
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userContent }
+          ],
+          max_tokens: 8000,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`Gemini API error (${response.status}):`, errorText.substring(0, 300));
+        
+        // Handle rate limits
+        if (response.status === 429) {
+          if (attempt < maxRetries - 1) {
+            const delay = 2000 * Math.pow(2, attempt) + Math.random() * 1000;
+            console.log(`Rate limited, waiting ${Math.round(delay)}ms...`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+            continue;
+          }
+          throw new Error('Rate limits exceeded, please try again later.');
+        }
+        
+        if (response.status === 402) {
+          throw new Error('AI service credits exhausted. Please add funds to continue.');
+        }
+        
+        throw new Error(`AI service error (${response.status}). Please try again.`);
+      }
+
+      const data = await response.json();
+      const content = data.choices?.[0]?.message?.content;
+      
+      if (!content) {
+        throw new Error('No response content from AI');
       }
       
-      // Last attempt failed - throw user-friendly error
-      if (response.status === 529) {
-        throw new Error('The AI service is currently experiencing high demand. Please wait a minute and try again.');
+      return content;
+    } catch (error) {
+      if (attempt === maxRetries - 1) {
+        throw error;
       }
-      throw new Error(`Analysis service temporarily unavailable (${response.status}). Please try again in a few moments.`);
+      console.log(`Attempt ${attempt + 1} failed, retrying...`);
+      await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)));
     }
-    
-    // Non-retryable error - return as-is
-    return response;
   }
   
   throw new Error('Max retries exceeded');
@@ -1014,61 +1043,20 @@ serve(async (req) => {
     // ═══════════════════════════════════════════════════════════════════════════
     // CALL 1: Pano Analysis
     // ═══════════════════════════════════════════════════════════════════════════
-    console.log('Starting Call 1: Panoramic analysis...');
+    console.log('Starting Call 1: Panoramic analysis with Gemini Pro...');
     
     const call1PromptFilled = fillTemplate(call1PanoPrompt, templateVars);
     
-    // Extract pano image data
-    const panoMatches = panoImage.match(/^data:([^;]+);base64,(.+)$/);
-    if (!panoMatches) {
-      throw new Error('Invalid panoramic image format');
-    }
-    
-    const panoMediaType = panoMatches[1];
-    const panoBase64 = panoMatches[2];
-    
-    console.log(`Pano image - Size: ${panoBase64.length} chars, Type: ${panoMediaType}`);
+    console.log(`Pano image - Size: ${panoImage.length} chars`);
 
-    const call1Response = await fetchWithRetry('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'x-api-key': anthropicApiKey!,
-        'anthropic-version': '2023-06-01',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'claude-opus-4-5-20251101',
-        max_tokens: 8000,
-        messages: [
-          {
-            role: 'user',
-            content: [
-              {
-                type: 'image',
-                source: {
-                  type: 'base64',
-                  media_type: panoMediaType,
-                  data: panoBase64
-                }
-              },
-              {
-                type: 'text',
-                text: call1PromptFilled
-              }
-            ]
-          }
-        ]
-      }),
-    });
-
-    if (!call1Response.ok) {
-      const errorText = await call1Response.text();
-      console.error('Call 1 Anthropic API error:', errorText);
-      throw new Error(`Call 1 API error: ${call1Response.status}`);
-    }
-
-    const call1Data = await call1Response.json();
-    const call1Text = call1Data.content[0].text;
+    // Call 1: Pano analysis using Gemini Pro vision
+    const call1Text = await callGeminiVision(
+      'You are an expert orthodontic radiograph analyst. Analyze the provided panoramic X-ray image following the structured protocol exactly.',
+      [
+        { type: 'image_url', image_url: { url: panoImage } },
+        { type: 'text', text: call1PromptFilled }
+      ]
+    );
     
     console.log('Call 1 complete. Extracting PANO_SUMMARY...');
     
@@ -1116,68 +1104,35 @@ serve(async (req) => {
       );
     }
     
-    console.log(`Starting Call 2: Photo analysis with ${photoImages.length} photos...`);
+    console.log(`Starting Call 2: Photo analysis with ${photoImages.length} photos using Gemini Pro...`);
     
     // Add CALL_1_OUTPUT to template vars
     templateVars.CALL_1_OUTPUT = panoSummary;
     
     const call2PromptFilled = fillTemplate(call2PhotosPrompt, templateVars);
     
-    // Prepare photo content for Claude
-    const photoContent: any[] = [];
+    // Prepare photo content for Gemini (OpenAI-compatible format)
+    const geminiContent: Array<{ type: string; text?: string; image_url?: { url: string } }> = [];
     
     photoImages.forEach((photoUrl: string, index: number) => {
-      const matches = photoUrl.match(/^data:([^;]+);base64,(.+)$/);
-      if (matches) {
-        const mediaType = matches[1];
-        const imageBase64 = matches[2];
-        
-        console.log(`Photo ${index + 1} - Size: ${imageBase64.length} chars, Type: ${mediaType}`);
-        
-        photoContent.push({
-          type: 'image',
-          source: {
-            type: 'base64',
-            media_type: mediaType,
-            data: imageBase64
-          }
-        });
-      }
+      console.log(`Photo ${index + 1} - Size: ${photoUrl.length} chars`);
+      geminiContent.push({
+        type: 'image_url',
+        image_url: { url: photoUrl }
+      });
     });
     
     // Add the prompt text
-    photoContent.push({
+    geminiContent.push({
       type: 'text',
       text: call2PromptFilled
     });
 
-    const call2Response = await fetchWithRetry('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'x-api-key': anthropicApiKey!,
-        'anthropic-version': '2023-06-01',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'claude-opus-4-5-20251101',
-        max_tokens: 8000,
-        messages: [
-          {
-            role: 'user',
-            content: photoContent
-          }
-        ]
-      }),
-    });
-
-    if (!call2Response.ok) {
-      const errorText = await call2Response.text();
-      console.error('Call 2 Anthropic API error:', errorText);
-      throw new Error(`Call 2 API error: ${call2Response.status}`);
-    }
-
-    const call2Data = await call2Response.json();
-    const call2Text = call2Data.content[0].text;
+    // Call 2: Photo analysis + cross-validation using Gemini Pro vision
+    const call2Text = await callGeminiVision(
+      'You are an expert orthodontic analyst. Analyze the provided intraoral photographs and cross-validate with the panoramic analysis summary, following the structured protocol exactly.',
+      geminiContent
+    );
     
     console.log('Call 2 complete. 2-call pipeline finished.');
 
