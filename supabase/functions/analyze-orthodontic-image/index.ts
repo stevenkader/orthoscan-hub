@@ -11,8 +11,50 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 };
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Retry logic for transient API errors (429, 529)
+// ═══════════════════════════════════════════════════════════════════════════════
+async function fetchWithRetry(
+  url: string, 
+  options: RequestInit, 
+  maxRetries = 3,
+  baseDelay = 2000
+): Promise<Response> {
+  let lastError: Error | null = null;
+  
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    const response = await fetch(url, options);
+    
+    // Success or client error (4xx except 429) - don't retry
+    if (response.ok || (response.status >= 400 && response.status < 500 && response.status !== 429)) {
+      return response;
+    }
+    
+    // Retryable errors: 429 (rate limit), 529 (overloaded), 5xx (server errors)
+    if (response.status === 429 || response.status === 529 || response.status >= 500) {
+      const errorText = await response.text();
+      console.log(`API returned ${response.status}, attempt ${attempt + 1}/${maxRetries}. Error: ${errorText.substring(0, 200)}`);
+      
+      if (attempt < maxRetries - 1) {
+        // Exponential backoff with jitter
+        const delay = baseDelay * Math.pow(2, attempt) + Math.random() * 1000;
+        console.log(`Waiting ${Math.round(delay)}ms before retry...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+        continue;
+      }
+      
+      lastError = new Error(`API error after ${maxRetries} attempts: ${response.status}`);
+    }
+    
+    // Non-retryable error
+    return response;
+  }
+  
+  throw lastError || new Error('Max retries exceeded');
+}
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // CALL 1 PROMPT: Panoramic Radiograph Analysis (OST v5.0)
@@ -983,7 +1025,7 @@ serve(async (req) => {
     
     console.log(`Pano image - Size: ${panoBase64.length} chars, Type: ${panoMediaType}`);
 
-    const call1Response = await fetch('https://api.anthropic.com/v1/messages', {
+    const call1Response = await fetchWithRetry('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'x-api-key': anthropicApiKey!,
@@ -1105,7 +1147,7 @@ serve(async (req) => {
       text: call2PromptFilled
     });
 
-    const call2Response = await fetch('https://api.anthropic.com/v1/messages', {
+    const call2Response = await fetchWithRetry('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'x-api-key': anthropicApiKey!,
