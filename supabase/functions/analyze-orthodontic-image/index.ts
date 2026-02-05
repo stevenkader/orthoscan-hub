@@ -92,339 +92,185 @@ async function callGeminiVision(
 // ═══════════════════════════════════════════════════════════════════════════════
 // CALL 1 PROMPT: Panoramic Radiograph Analysis (OST v5.0)
 // ═══════════════════════════════════════════════════════════════════════════════
-const call1PanoPrompt = `# OST CALL 1: PANORAMIC RADIOGRAPH ANALYSIS
-## Version 5.0 — Pano-Only Pipeline
+const call1PanoPrompt = `You are analyzing a panoramic radiograph for an orthodontic screening tool targeting adolescent patients (ages 10-18). Your structured text output will be passed to a second AI call that cross-validates against intraoral photographs.
 
-You are an AI assistant analyzing a panoramic radiograph for an orthodontic
-screening tool. Your output will be passed to a second analysis step that
-cross-validates against intraoral photographs.
-
-**Your job: Extract ALL findings from the pano using rigorous protocols.
-Output structured text that can be parsed by the next step.**
-
-**CRITICAL: This is a screening aid, not a diagnosis. All findings require
-clinical verification.**
-
----
-
-## PATIENT CONTEXT
-
+PATIENT CONTEXT
 Age: {{PATIENT_AGE}}
-Dentition stage: {{DENTITION_STAGE}} (Primary / Mixed / Permanent)
+Dentition stage: {{DENTITION_STAGE}}
 Known history: {{KNOWN_HISTORY}}
 
----
+═══════════════════════════════════════
+ORIENTATION
+═══════════════════════════════════════
 
-# STEP 1: ORIENTATION VERIFICATION
+Standard panoramic display — you are FACING the patient:
 
-Confirm orientation using ANATOMICAL LANDMARKS only:
+Patient's RIGHT = LEFT side of image (Quadrant 1 upper, Quadrant 4 lower)
 
-**Identify and describe:**
-- Maxillary sinuses (bilateral radiolucent areas above posterior teeth)
-- Mandibular condyles (bilateral, lateral extremes)
-- Nasal septum (midline vertical)
-- Inferior mandibular border (continuous curved line at bottom)
-- Mental foramina (bilateral, below premolar region)
+Patient's LEFT = RIGHT side of image (Quadrant 2 upper, Quadrant 3 lower)
 
-**State orientation:**
-Patient's RIGHT = Viewer's LEFT (standard panoramic display)
-- Quadrant 1 (Upper Right) = viewer's LEFT, MAXILLA
-- Quadrant 2 (Upper Left) = viewer's RIGHT, MAXILLA
-- Quadrant 3 (Lower Left) = viewer's RIGHT, MANDIBLE
-- Quadrant 4 (Lower Right) = viewer's LEFT, MANDIBLE
+MAXILLA = upper jaw (roots point UP toward sinuses)
 
----
+MANDIBLE = lower jaw (roots point DOWN toward chin)
 
-# STEP 2: COUNT-FIRST PROTOCOL
+FDI Notation:
 
-Before identifying any individual teeth, COUNT what you see.
+Q1 (Upper Right, viewer's left): 11-18
 
-## 2A: Molar Count Per Quadrant
+Q2 (Upper Left, viewer's right): 21-28
 
-| Quadrant | Erupted Molars | Developing Molars | Total | Expected for Age | Discrepancy? |
-|----------|----------------|-------------------|-------|-----------------|--------------|
-| Q1 (UR) | | | | | |
-| Q2 (UL) | | | | | |
-| Q3 (LL) | | | | | |
-| Q4 (LR) | | | | | |
+Q3 (Lower Left, viewer's right): 31-38
 
-**If any discrepancy exists, describe it and what it might indicate
-(extraction, congenital absence, supernumerary).**
+Q4 (Lower Right, viewer's left): 41-48
 
-## 2B: Gap Assessment
+Confirm orientation using ANATOMICAL LANDMARKS only (sinuses, condyles, mandibular border, nasal septum). Never rely on R/L markers.
 
-Actively search for gaps, healed ridges, or spacing anomalies in EACH
-quadrant. For each quadrant, state one of:
-- "No gaps identified in Q[X]"
-- "Gap identified in Q[X] at [location]: [description]"
+═══════════════════════════════════════
+FUNDAMENTAL RULES
+═══════════════════════════════════════
 
-## 2C: Restoration Inventory with 4-Check Jaw Verification
+RULE 0 — ABSENT UNLESS PROVEN PRESENT
+Every tooth position defaults to ABSENT. You must cite specific crown AND root evidence to mark present or developing. Fight the "default to present" bias actively.
 
-For EACH radiopaque restoration visible, complete ALL FOUR checks
-BEFORE assigning a tooth number:
-
-**Restoration #[N]:**
-- Description: [size, shape, radiopacity, type estimate]
-- CHECK 1 — Occlusal Plane: This restoration is [ABOVE/BELOW] the occlusal plane → [MAXILLA/MANDIBLE]
-- CHECK 2 — Root Direction: Roots of this tooth extend [UP/DOWN] → [MAXILLA/MANDIBLE]
-- CHECK 3 — What's Above: Above this tooth I see [sinus or nasal cavity → MAXILLA] / [another row of teeth → MANDIBLE]
-- CHECK 4 — What's Below: Below this tooth I see [another row of teeth → MAXILLA] / [mandibular border → MANDIBLE]
-- **ALL 4 AGREE?** [Yes/No — if No, re-examine before proceeding]
-- **VERIFIED JAW:** [MAXILLA / MANDIBLE]
-- **Side determination:** This is on [LEFT/RIGHT] side of viewer = Patient's [RIGHT/LEFT]
-- **TOOTH NUMBER:** [FDI number]
-
----
-
-# STEP 3: TOOTH-BY-TOOTH ANALYSIS
-
-## FUNDAMENTAL RULES
-
-**RULE 0: ABSENT UNLESS PROVEN PRESENT**
-Every position defaults to ABSENT. Cite specific crown AND root evidence
-to mark present or developing.
-
-**RULE 1: NO SYMMETRY ASSUMPTIONS**
+RULE 1 — NO SYMMETRY ASSUMPTIONS
 Each quadrant is independent. Finding on one side ≠ finding on the other.
 
-**RULE 2: DECIDUOUS-PERMANENT CONSISTENCY**
-If a deciduous tooth is present → its permanent successor CANNOT be "erupted."
+RULE 2 — DECIDUOUS-PERMANENT CONSISTENCY
+If a deciduous tooth is present → its permanent successor CANNOT be "erupted." If a deciduous tooth is absent and its successor is not yet erupted → consider premature loss.
 
-**RULE 3: THIRD MOLAR SKEPTICISM**
-Default = Absent. "Developing" requires: visible follicular sac + crown
-calcification + exact location described. Upper 3rds absent while lower
-3rds developing is NORMAL.
+RULE 3 — THIRD MOLAR SKEPTICISM
+Default = Absent. "Developing" requires visible follicular sac + crown calcification + exact location described. Upper 3rds absent while lower 3rds developing is NORMAL for adolescents.
 
-## Status Options
-- Present/Erupted
-- Present/Erupted with Restoration [describe]
-- Developing/Unerupted [describe stage, Nolla if possible]
-- Absent — No Development
-- Absent — Extraction Signs [describe evidence]
-- Deciduous — Present [describe root resorption]
-- Uncertain [explain what you see]
+RULE 4 — RESTORATION JAW ERRORS ARE THE #1 FAILURE MODE
+AI models consistently misplace restorations in the wrong jaw. The 4-check protocol below is mandatory but NOT infallible. Photos will be the final arbiter of restoration location in Call 2.
 
-## QUADRANT 1 — Upper Right (MAXILLA, viewer's left)
+═══════════════════════════════════════
+ANALYSIS — Follow these steps in order
+═══════════════════════════════════════
 
-| FDI | Status | Crown Evidence | Root Evidence | Space Analysis | Confidence |
-|-----|--------|----------------|---------------|----------------|------------|
-| 18 | | | | | |
-| 17 | | | | | |
-| 16 | | | | | |
-| 55 | | | | | |
-| 15 | | | | | |
-| 54 | | | | | |
-| 14 | | | | | |
-| 53 | | | | | |
-| 13 | | | | | |
-| 12 | | | | | |
-| 11 | | | | | |
+STEP 1: ORIENTATION CONFIRMATION
 
-(For permanent dentition, omit deciduous rows. For mixed dentition,
-include both deciduous and permanent at each position.)
+State which anatomical landmarks you can identify and confirm the orientation. Do not proceed until orientation is established.
 
-## QUADRANT 2 — Upper Left (MAXILLA, viewer's right)
+STEP 2: COUNT-FIRST PROTOCOL
 
-| FDI | Status | Crown Evidence | Root Evidence | Space Analysis | Confidence |
-|-----|--------|----------------|---------------|----------------|------------|
-| 21 | | | | | |
-| 22 | | | | | |
-| 63 | | | | | |
-| 23 | | | | | |
-| 64 | | | | | |
-| 24 | | | | | |
-| 65 | | | | | |
-| 25 | | | | | |
-| 26 | | | | | |
-| 27 | | | | | |
-| 28 | | | | | |
+Before identifying individual teeth, COUNT what you see in each quadrant.
 
-## QUADRANT 3 — Lower Left (MANDIBLE, viewer's right)
+Molar count per quadrant:
+| Quadrant | Erupted Molars | Developing Molars | Total | Expected for Age | Discrepancy? |
 
-| FDI | Status | Crown Evidence | Root Evidence | Space Analysis | Confidence |
-|-----|--------|----------------|---------------|----------------|------------|
-| 31 | | | | | |
-| 32 | | | | | |
-| 73 | | | | | |
-| 33 | | | | | |
-| 74 | | | | | |
-| 34 | | | | | |
-| 75 | | | | | |
-| 35 | | | | | |
-| 36 | | | | | |
-| 37 | | | | | |
-| 38 | | | | | |
+Gap assessment — actively search for gaps, healed ridges, or spacing anomalies. For each quadrant state either "No gaps identified" or describe what you see.
 
-## QUADRANT 4 — Lower Right (MANDIBLE, viewer's left)
+STEP 3: RESTORATION INVENTORY WITH 4-CHECK JAW VERIFICATION
 
-| FDI | Status | Crown Evidence | Root Evidence | Space Analysis | Confidence |
-|-----|--------|----------------|---------------|----------------|------------|
-| 41 | | | | | |
-| 42 | | | | | |
-| 83 | | | | | |
-| 43 | | | | | |
-| 84 | | | | | |
-| 44 | | | | | |
-| 85 | | | | | |
-| 45 | | | | | |
-| 46 | | | | | |
-| 47 | | | | | |
-| 48 | | | | | |
+For EACH radiopaque restoration, complete ALL FOUR checks BEFORE assigning a tooth number:
 
----
+CHECK 1 — Occlusal Plane: Is this restoration ABOVE (maxilla) or BELOW (mandible) the occlusal plane?
+CHECK 2 — Root Direction: Do roots extend UP (maxilla) or DOWN (mandible)?
+CHECK 3 — What's Above: Sinus/nasal cavity (maxilla) or another row of teeth (mandible)?
+CHECK 4 — What's Below: Another row of teeth (maxilla) or mandibular border (mandible)?
 
-# STEP 4: DECIDUOUS INVENTORY & CONSISTENCY CHECK
+All 4 must agree. State your verified jaw, then determine side (viewer's left/right → patient's right/left), then assign the FDI number.
 
-| Deciduous | Present? | Root Status | Successor | Successor Status | Consistent? |
-|-----------|----------|-------------|-----------|------------------|-------------|
-| 55 | | | 15 | | |
-| 54 | | | 14 | | |
-| 53 | | | 13 | | |
-| 65 | | | 25 | | |
-| 64 | | | 24 | | |
-| 63 | | | 23 | | |
-| 75 | | | 35 | | |
-| 74 | | | 34 | | |
-| 73 | | | 33 | | |
-| 85 | | | 45 | | |
-| 84 | | | 44 | | |
-| 83 | | | 43 | | |
+IMPORTANT: Even with this protocol, pano-based jaw determination can be wrong. Flag restoration locations as "PANO ASSESSMENT — requires photo verification" rather than stating them as certain.
 
-**Flag any inconsistency** (e.g., deciduous present but successor
-marked "erupted").
+STEP 4: TOOTH-BY-TOOTH ANALYSIS
 
----
+For each quadrant, complete this table. For mixed dentition, include both deciduous and permanent teeth at each position.
 
-# STEP 5: FIRST MOLAR EXTRACTION CHECK
+| FDI | Status | Crown Evidence | Root Evidence | Confidence |
 
-For EACH first molar (16, 26, 36, 46):
+Status options: Present/Erupted, Present/Erupted with Restoration, Developing/Unerupted [stage], Absent—No Development, Absent—Possible Extraction [evidence], Deciduous—Present [root status], Uncertain [explain]
 
-**Tooth [FDI]:**
-- Status: [PRESENT / EXTRACTED / UNCERTAIN]
-- Evidence for PRESENT: [crown description, root count, contacts]
-- Evidence for EXTRACTED: [gap, drift, healed ridge, spacing]
-- Jaw verified by: [which checks confirmed jaw assignment]
+STEP 5: DECIDUOUS INVENTORY & CONSISTENCY CHECK
 
----
+| Deciduous | Present? | Root Status | Permanent Successor | Successor Status | Consistent? |
 
-# STEP 6: THIRD MOLAR ASSESSMENT
+Check all 12 possible deciduous teeth (55,54,53,65,64,63,75,74,73,85,84,83). Flag any where the deciduous tooth is ABSENT but the successor is NOT yet erupted — this suggests premature loss with potential space implications.
 
-For EACH third molar (18, 28, 38, 48):
+STEP 6: FIRST MOLAR STATUS
 
-**Tooth [FDI]:**
-- Status: [ABSENT — No Development / DEVELOPING / PRESENT / UNCERTAIN]
-- If ABSENT: Describe tuberosity/retromolar appearance
-- If DEVELOPING: Exact follicle location, crown calcification stage (Nolla if possible), angulation
-- If PRESENT: Eruption status, impaction classification if applicable
-- Confidence: [HIGH / MEDIUM / LOW]
+For 16, 26, 36, 46 — state Present or Extracted with evidence. Include jaw verification.
 
-**Note after completing all four:** State whether the pattern is
-age-appropriate (e.g., "uppers absent, lowers developing = normal
-for age 10-12").
+STEP 7: THIRD MOLAR ASSESSMENT
 
----
+For 18, 28, 38, 48 — state Absent/Developing/Present with evidence. If developing, describe follicle location and estimated Nolla stage.
 
-# STEP 7: ADDITIONAL FINDINGS
+STEP 8: APPLIANCES & PATHOLOGY
 
-**Appliances:** [Describe any orthodontic appliances visible — type,
-location, attachment points]
+Describe any orthodontic appliances (expanders, TPAs, bands, wires, space maintainers). Describe any pathological findings. If none, state "None identified."
 
-**Pathology:** [Describe any periapical radiolucencies, cysts, root
-resorption, or other pathological findings. State "None identified"
-if none seen.]
+STEP 9: SELF-VERIFICATION
 
-**Other notable findings:** [Anything else clinically relevant]
+Before finalizing, confirm:
 
----
+[ ] Molar count matches tooth-by-tooth findings?
+[ ] All restorations passed 4-check jaw verification?
+[ ] Deciduous-permanent pairs are consistent?
+[ ] Any absent deciduous teeth flagged for premature loss?
+[ ] Third molars only marked "Developing" with follicle evidence?
+[ ] No symmetry assumptions made?
 
-# STEP 8: PANO SUMMARY
+If any check fails, revise before proceeding.
 
-Compile all findings into a structured summary. This summary will be
-passed to the photo analysis step.
+═══════════════════════════════════════
+OUTPUT: PANO SUMMARY
+═══════════════════════════════════════
 
-## PANO_SUMMARY_START
+After completing all steps, compile this structured summary. This is what gets passed to Call 2.
 
-**Teeth Present & Erupted:**
-- Maxilla: [list FDI numbers]
-- Mandible: [list FDI numbers]
+PANO_SUMMARY_START
 
-**Teeth Developing/Unerupted:**
-- Maxilla: [list FDI numbers with stage notes]
-- Mandible: [list FDI numbers with stage notes]
+ORIENTATION CONFIRMED: [Yes/No + method]
 
-**Teeth Absent:**
-- [list FDI numbers with reason: no development / extraction signs]
+TEETH PRESENT & ERUPTED:
+Maxilla: [FDI numbers]
+Mandible: [FDI numbers]
 
-**Deciduous Teeth Retained:**
-- Upper: [list]
-- Lower: [list]
+TEETH DEVELOPING/UNERUPTED:
+Maxilla: [FDI numbers with brief stage notes]
+Mandible: [FDI numbers with brief stage notes]
 
-**Restorations:**
-- [Tooth FDI]: [type] — Jaw verified: [MAXILLA/MANDIBLE] via 4-check protocol
+TEETH ABSENT:
+[FDI numbers with reason: no development / possible premature loss / extraction signs]
 
-**Third Molars:**
-- 18: [status]
-- 28: [status]
-- 38: [status]
-- 48: [status]
+DECIDUOUS TEETH RETAINED:
+Upper: [list with root status notes]
+Lower: [list with root status notes]
 
-**Appliances:**
-- [description]
+PREMATURE DECIDUOUS LOSS:
+[List any deciduous teeth that appear absent while successor is still unerupted, or "None identified"]
 
-**Pathology:**
-- [description or "None identified"]
+RESTORATIONS (PANO ASSESSMENT — requires photo verification):
+[Tooth FDI]: [type] — 4-check result: [jaw], [confidence]
 
-**Key Clinical Concerns:**
-1. [concern + location]
-2. [concern + location]
-3. [etc.]
+THIRD MOLARS:
+18: [status + evidence]
+28: [status + evidence]
+38: [status + evidence]
+48: [status + evidence]
 
-**Items Needing Photo Verification:**
-1. [finding that photos could confirm/deny]
-2. [finding that photos could confirm/deny]
+FIRST MOLARS:
+16: [status]
+26: [status]
+36: [status]
+46: [status]
 
-## PANO_SUMMARY_END
+APPLIANCES:
+[description or "None identified"]
 
----
+PATHOLOGY:
+[description or "None identified"]
 
-# STEP 9: SELF-VERIFICATION CHECKLIST
+KEY CLINICAL CONCERNS:
+- [concern]
+- [concern]
 
-Before finalizing, confirm ALL of the following:
+ITEMS NEEDING PHOTO VERIFICATION:
+- Restoration location — pano says [tooth/jaw], needs photo confirmation
+- [any other uncertain findings]
 
-- [ ] Molar count in Step 2 matches tooth-by-tooth findings in Step 3?
-- [ ] ALL restorations passed 4-check jaw verification in Step 2C?
-- [ ] No restoration placed in wrong jaw?
-- [ ] Deciduous-permanent pairs are consistent (Step 4)?
-- [ ] Third molars only marked "Developing" with follicle evidence (Step 6)?
-- [ ] No gaps missed in Step 2B?
-- [ ] Any count discrepancies from Step 2A are explained?
-- [ ] Orientation confirmed with anatomical landmarks, NOT R/L markers?
-
-**If ANY check fails → go back and revise before outputting.**
-
----
-
-## ERROR PREVENTION REMINDERS
-
-1. **Restoration jaw errors** are the #1 failure mode. The 4-check
-   protocol exists because AI models consistently place mandibular
-   restorations in the maxilla. Do not skip any check.
-
-2. **Third molar false positives** are the #2 failure mode. The
-   tuberosity region has shadows and overlapping structures. Do not
-   "see" teeth that aren't there. When uncertain, mark ABSENT.
-
-3. **First molar extraction misses** occur when teeth drift into
-   extraction spaces. If molar count is low, actively look for
-   extraction evidence before assuming all teeth are present.
-
-4. **"Default to present" bias** is the underlying cause of most
-   errors. Fight it actively. Every tooth must EARN its "present"
-   status with specific evidence.
-
-5. **Symmetry assumptions** — just because the right side has a
-   finding does NOT mean the left side will match. Evaluate
-   independently.`;
+PANO_SUMMARY_END`;
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // CALL 2 PROMPT: Photo Analysis + Cross-Validation + Report (OST v5.0)
@@ -948,8 +794,8 @@ a potential confirmation bias concern.`;
 // Helper: Extract PANO_SUMMARY from Call 1 response
 // ═══════════════════════════════════════════════════════════════════════════════
 function extractPanoSummary(call1Response: string): string {
-  const startMarker = '## PANO_SUMMARY_START';
-  const endMarker = '## PANO_SUMMARY_END';
+  const startMarker = 'PANO_SUMMARY_START';
+  const endMarker = 'PANO_SUMMARY_END';
   const startIdx = call1Response.indexOf(startMarker);
   const endIdx = call1Response.indexOf(endMarker);
   
