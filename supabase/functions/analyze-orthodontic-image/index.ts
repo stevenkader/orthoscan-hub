@@ -275,275 +275,133 @@ PANO_SUMMARY_END`;
 // ═══════════════════════════════════════════════════════════════════════════════
 // CALL 2 PROMPT: Photo Analysis + Cross-Validation + Report (OST v5.0)
 // ═══════════════════════════════════════════════════════════════════════════════
-const call2PhotosPrompt = `# OST CALL 2: PHOTO ANALYSIS, CROSS-VALIDATION & CLINICAL REPORT
-## Version 5.0 — Photos + Pano Results Pipeline
+const call2PhotosPrompt = `You are completing an orthodontic screening analysis. You will:
 
-You are an AI assistant completing an orthodontic screening analysis.
-You are receiving:
+FIRST analyze the intraoral photographs independently (Step A)
+THEN cross-validate against panoramic radiograph results (Step B)
+THEN generate a clinical screening report (Step C)
 
-1. **Intraoral photographs** (up to 5 standard views) — analyze these FIRST
-2. **Panoramic radiograph analysis text** (from a prior analysis step) — use
-   this ONLY in the cross-validation phase, NOT during photo analysis
+CRITICAL: Complete Step A FULLY before reading the pano results in Step B. This prevents confirmation bias.
 
-**CRITICAL INSTRUCTION: Complete STEP A (photo analysis) FULLY before
-reading the pano results in STEP B. This prevents confirmation bias.**
-
-**This is a screening aid, not a diagnosis. All findings require clinical
-verification.**
-
----
-
-## PATIENT CONTEXT
-
+PATIENT CONTEXT
 Age: {{PATIENT_AGE}}
+Name: {{PATIENT_NAME}}
 Dentition stage: {{DENTITION_STAGE}}
 Known history: {{KNOWN_HISTORY}}
 
----
-
-# ═══════════════════════════════════════════
-# STEP A: INDEPENDENT PHOTO ANALYSIS
-# ═══════════════════════════════════════════
+═══════════════════════════════════════
+STEP A: INDEPENDENT PHOTO ANALYSIS
+═══════════════════════════════════════
 
 Analyze the intraoral photographs WITHOUT reference to pano findings.
-Document what you SEE in the photos.
 
-## A1: PHOTO IDENTIFICATION
+A1: PHOTO IDENTIFICATION
 
-Identify which views are provided:
+| View | Present? | Quality |
+Right lateral (buccal) — patient's right side, molars toward right of image
+Frontal (anterior) — teeth in occlusion, facing patient
+Left lateral (buccal) — patient's left side, molars toward left of image
+Upper occlusal (mirror) — maxillary arch, anterior at top, Patient's RIGHT = Viewer's RIGHT
+Lower occlusal (mirror) — mandibular arch, anterior at bottom, Patient's RIGHT = Viewer's RIGHT
 
-| View | Present? | Quality | Key Features Visible |
-|------|----------|---------|---------------------|
-| Right lateral (buccal) | Yes/No | Good/Fair/Poor | |
-| Frontal (anterior) | Yes/No | Good/Fair/Poor | |
-| Left lateral (buccal) | Yes/No | Good/Fair/Poor | |
-| Upper occlusal (mirror) | Yes/No | Good/Fair/Poor | |
-| Lower occlusal (mirror) | Yes/No | Good/Fair/Poor | |
+A2: TOOTH INVENTORY FROM PHOTOS
 
-## A2: PHOTO ORIENTATION GUIDE
+For each tooth visible, state: position, deciduous or permanent (with evidence), any restoration.
 
-**Lateral views:**
-- Right lateral: Patient's right side. Molars toward right of image.
-- Left lateral: Patient's left side. Molars toward left of image.
+Upper Arch:
+| Position | Visible? | Deciduous/Permanent | Evidence | Restoration? | Notes |
 
-**Occlusal views (MIRROR images):**
-- Upper occlusal: Anterior teeth at TOP. Patient's RIGHT = Viewer's RIGHT.
-- Lower occlusal: Anterior teeth at BOTTOM. Patient's RIGHT = Viewer's RIGHT.
+Lower Arch:
+| Position | Visible? | Deciduous/Permanent | Evidence | Restoration? | Notes |
 
-**Frontal view:**
-- Patient's RIGHT = Viewer's LEFT (facing the patient).
+A3: RESTORATIONS & APPLIANCES FROM PHOTOS
 
-## A3: TOOTH INVENTORY FROM PHOTOS
+For EACH restoration visible:
+- Which arch (upper/lower)?
+- Which side (right/left)?
+- Which tooth position?
+- What type (SSC, amalgam, composite)?
+- Which view(s) confirm it?
 
-Document every tooth you can see. For each, state whether it appears to
-be deciduous or permanent and why.
+For appliances: describe type, location, and which views show it. If none visible, state "None."
 
-**Upper Arch (from occlusal + lateral views):**
+A4: OCCLUSION
 
-| Position | Tooth Visible? | Deciduous/Permanent | Evidence | Restoration? | Notes |
-|----------|---------------|---------------------|----------|-------------|-------|
-| UR6 area | | | | | |
-| UR5/E area | | | | | |
-| UR4/D area | | | | | |
-| UR3/C | | | | | |
-| UR2 | | | | | |
-| UR1 | | | | | |
-| UL1 | | | | | |
-| UL2 | | | | | |
-| UL3/C | | | | | |
-| UL4/D area | | | | | |
-| UL5/E area | | | | | |
-| UL6 area | | | | | |
+From lateral views:
+| | Right Side | Left Side |
+| Molar relationship | Class I / II / III | Class I / II / III |
+| Canine relationship | | |
+| Posterior crossbite | Yes/No | Yes/No |
 
-**Lower Arch (from occlusal + lateral views):**
+From frontal view: Overjet, Overbite, Midlines (upper to face, lower to upper), Anterior crowding/spacing upper and lower
 
-| Position | Tooth Visible? | Deciduous/Permanent | Evidence | Restoration? | Notes |
-|----------|---------------|---------------------|----------|-------------|-------|
-| LR6 area | | | | | |
-| LR5/E area | | | | | |
-| LR4/D area | | | | | |
-| LR3/C | | | | | |
-| LR2 | | | | | |
-| LR1 | | | | | |
-| LL1 | | | | | |
-| LL2 | | | | | |
-| LL3/C | | | | | |
-| LL4/D area | | | | | |
-| LL5/E area | | | | | |
-| LL6 area | | | | | |
+A5: ARCH FORM
 
-## A4: RESTORATION & APPLIANCE INVENTORY FROM PHOTOS
+Upper: shape, symmetry, palatal vault, expansion appliance?
+Lower: shape, symmetry, crowding location
 
-For EACH restoration or appliance visible:
+A6: SOFT TISSUE & HYGIENE
 
-| Finding | Location (Arch + Side + Tooth) | View(s) Seen In | Type | Description |
-|---------|-------------------------------|-----------------|------|-------------|
-| | | | | |
+Gingival health, oral hygiene, plaque/calculus, recession, frenum, lesions
 
-**Be specific:** "SSC on lower left first molar" not "restoration on molar."
+A7: PHOTO SUMMARY
 
-## A5: OCCLUSION ASSESSMENT
+Compile your independent findings:
 
-**From Lateral Views:**
+ERUPTED TEETH: Upper [list], Lower [list]
+DECIDUOUS TEETH: Upper [list], Lower [list]
+RESTORATIONS: [location, type, views confirming]
+APPLIANCES: [description or None]
+OCCLUSION: Molar [R/L], Overjet, Overbite, Midlines, Crossbite
+ARCH FORM: Upper [description], Lower [description]
+HYGIENE: [summary]
 
-| Measurement | Right Side | Left Side | View Used |
-|-------------|-----------|-----------|-----------|
-| Molar relationship | Class I / II / III | Class I / II / III | R/L lateral |
-| Canine relationship | Class I / II / III / N/A | Class I / II / III / N/A | R/L lateral |
-| Posterior crossbite | Yes / No | Yes / No | R/L lateral |
+═══════════════════════════════════════
+STEP B: CROSS-VALIDATION
+═══════════════════════════════════════
 
-**From Frontal View:**
+NOW read the panoramic analysis results and compare against your photo findings.
 
-| Measurement | Assessment | Confidence |
-|-------------|-----------|------------|
-| Overjet | [Normal ~2-3mm / Increased / Decreased / Edge-to-edge / Crossbite] | |
-| Overbite | [Normal ~2-3mm / Deep >4mm / Open bite] | |
-| Upper midline to face | [Coincident / Shifted R ~Xmm / Shifted L ~Xmm] | |
-| Lower midline to upper | [Coincident / Shifted R ~Xmm / Shifted L ~Xmm] | |
-| Anterior crowding upper | [None / Mild / Moderate / Severe] | |
-| Anterior crowding lower | [None / Mild / Moderate / Severe] | |
-| Anterior spacing upper | [None / Mild / Moderate / Severe] | |
-| Anterior spacing lower | [None / Mild / Moderate / Severe] | |
-
-## A6: ARCH FORM & SYMMETRY
-
-**Upper Arch (from occlusal view):**
-- Shape: [Narrow / Normal / Broad / V-shaped / U-shaped]
-- Symmetry: [Symmetric / Asymmetric — describe]
-- Palatal vault: [Shallow / Normal / Deep / Cannot assess]
-- Expansion appliance: [Yes — describe type, screw visible? / No]
-
-**Lower Arch (from occlusal view):**
-- Shape: [Narrow / Tapered / Normal / Broad]
-- Symmetry: [Symmetric / Asymmetric — describe]
-- Crowding location: [Anterior / Posterior / Both / None]
-
-## A7: SOFT TISSUE & HYGIENE
-
-| Finding | Assessment |
-|---------|-----------|
-| Gingival health | [Healthy / Mild inflammation / Moderate / Severe] |
-| Oral hygiene | [Good / Fair / Poor] |
-| Visible plaque/calculus | [None / Mild / Moderate / Heavy] |
-| Gingival recession | [None / Location: ___] |
-| Frenum concerns | [None / High labial / Lingual tie / Other] |
-| Soft tissue lesions | [None / Describe] |
-
-## A8: PHOTO SUMMARY
-
-Compile your independent photo findings:
-
-## PHOTO_SUMMARY_START
-
-**Erupted Teeth Seen:**
-- Upper: [list by position]
-- Lower: [list by position]
-
-**Deciduous Teeth Identified:**
-- Upper: [list]
-- Lower: [list]
-
-**Restorations Seen:**
-- [Location]: [Type] — seen in [which view(s)]
-
-**Appliances Seen:**
-- [Description]: seen in [which view(s)]
-
-**Occlusion:**
-- Molar: [R/L classification]
-- Overjet: [assessment]
-- Overbite: [assessment]
-- Midlines: [assessment]
-- Crossbite: [Y/N, location]
-
-**Arch Assessment:**
-- Upper: [shape, width, symmetry]
-- Lower: [shape, width, crowding]
-
-**Hygiene/Soft Tissue:**
-- [summary]
-
-## PHOTO_SUMMARY_END
-
----
-
-# ═══════════════════════════════════════════
-# STEP B: CROSS-VALIDATION
-# ═══════════════════════════════════════════
-
-NOW read the panoramic analysis results below and compare against
-your photo findings.
-
-## PANO ANALYSIS RESULTS:
-
+PANORAMIC ANALYSIS RESULTS:
 {{CALL_1_OUTPUT}}
 
----
-
-## B1: CROSS-VALIDATION TABLE
-
-For each key finding, compare pano vs photos:
+B1: CROSS-VALIDATION TABLE
 
 | Finding | Pano Says | Photos Say | Match? | Final Determination | Confidence |
-|---------|----------|-----------|--------|--------------------| -----------|
-| Restoration #1 location | [tooth, jaw] | [tooth, arch] | ✓/✗ | | |
-| First molar 16 | [status] | [visible? appearance?] | ✓/✗ | | |
-| First molar 26 | [status] | [visible? appearance?] | ✓/✗ | | |
-| First molar 36 | [status] | [visible? appearance?] | ✓/✗ | | |
-| First molar 46 | [status] | [visible? appearance?] | ✓/✗ | | |
-| Deciduous canines 53/63 | [status] | [visible?] | ✓/✗ | | |
-| Deciduous canines 73/83 | [status] | [visible?] | ✓/✗ | | |
-| Deciduous molars upper | [count, which] | [count, which] | ✓/✗ | | |
-| Deciduous molars lower | [count, which] | [count, which] | ✓/✗ | | |
-| Permanent incisors | [which erupted] | [which visible] | ✓/✗ | | |
-| Appliances | [type, location] | [type, location] | ✓/✗ | | |
-| Permanent canines | [status] | [erupted/not visible] | ✓/✗ | | |
 
-## B2: DISCREPANCY RESOLUTION
+Compare these key findings:
+- Restoration location(s) and type(s)
+- First molar status (16, 26, 36, 46)
+- Deciduous canine status
+- Deciduous molar count and identity
+- Erupted permanent teeth
+- Appliances
+- Premature deciduous loss (if flagged by pano)
+- Any teeth the pano flagged as uncertain
 
-For EACH finding where pano and photos DISAGREE:
+B2: DISCREPANCY RESOLUTION
 
-**Discrepancy #[N]:**
-- Pano says: ___
-- Photos say: ___
-- Most likely explanation: ___
-- Resolution: ___
+For each disagreement, apply this resolution hierarchy:
 
-**Resolution hierarchy (which source to trust):**
+PHOTOS WIN for: eruption status, restoration location/type, occlusion, arch form, crowding severity, appliance identification
+PANO WINS for: developing/unerupted teeth, root development, pathology, third molar status, bone levels
+USE BOTH for: posterior tooth count, deciduous-permanent identification, premature loss assessment
 
-| Finding Type | Winner | Reason |
-|-------------|--------|--------|
-| Eruption status | **PHOTOS** | Direct visualization beats radiographic inference |
-| Restoration location/jaw | **PHOTOS** | You can SEE which arch it's in |
-| Restoration type (SSC vs amalgam) | **PHOTOS** | Direct visual identification |
-| Developing/unerupted teeth | **PANO** | Photos can't see below the gums |
-| Root development stage | **PANO** | Photos show only crowns |
-| Pathology (periapical, cysts) | **PANO** | Internal structures not visible clinically |
-| Occlusion (Class, overjet, overbite) | **PHOTOS** | Pano doesn't show bite |
-| Arch form and crowding severity | **PHOTOS** | 3D reality vs 2D distortion |
-| Third molar status | **PANO** | Almost never visible in photos for adolescents |
-| Tooth count (posterior) | **BOTH** | Use both for highest confidence |
+For each discrepancy state: what pano says, what photos say, resolution, reasoning.
 
-## B3: CONFIDENCE UPGRADE TABLE
+B3: CONFIDENCE LEVELS
 
-| Finding | Pano-Only Confidence | Photo-Only Confidence | Combined Confidence | Reason |
-|---------|---------------------|----------------------|--------------------| -------|
-| | | | | |
+VERIFIED = Both pano AND photos agree
+HIGH = One source clear, other compatible or N/A
+MEDIUM = One source shows, other can't confirm
+LOW = Ambiguous in available imaging
+CONFLICTED = Sources disagree — flag for clinical exam
 
-**Confidence levels:**
-- **VERIFIED** = Both pano AND photos agree → highest reliability
-- **HIGH** = One source clear, other compatible or not applicable
-- **MEDIUM** = One source shows, other can't confirm/deny
-- **LOW** = Ambiguous in available imaging
-- **CONFLICTED** = Sources disagree → flag for clinical exam
+═══════════════════════════════════════
+STEP C: CLINICAL SCREENING REPORT
+═══════════════════════════════════════
 
----
-
-# ═══════════════════════════════════════════
-# STEP C: CLINICAL SCREENING REPORT
-# ═══════════════════════════════════════════
-
-Generate the final report using ALL validated findings.
+Generate the report below using ALL validated findings.
 
 ---
 
@@ -556,19 +414,15 @@ Generate the final report using ALL validated findings.
 **Dentition Stage:** {{DENTITION_STAGE}}
 **Images Analyzed:** 1 panoramic radiograph + {{NUM_PHOTOS}} intraoral photographs
 
-*This AI-assisted evaluation is based solely on the uploaded images and is
-not a substitute for an in-person orthodontic examination, diagnosis, or
-treatment plan.*
+*This AI-assisted evaluation is based solely on the uploaded images and is not a substitute for an in-person orthodontic examination, diagnosis, or treatment plan.*
 
 ---
 
 ### 🚨 RED FLAGS — Review Immediately
 
-[Only include if findings exist. Otherwise: "None identified."]
+[Only if findings exist. Otherwise: "None identified."]
 
 | Finding | Location | Source | Urgency | Recommended Action |
-|---------|----------|--------|---------|-------------------|
-| | | Pano / Photo / Both | High / Moderate / Low | |
 
 ---
 
@@ -576,219 +430,124 @@ treatment plan.*
 
 **Dental Age:** [Early mixed / Late mixed / Early permanent / Full permanent]
 
-**Key Timing Factors:**
-
-| Factor | Status | Source | Ready for Treatment? |
-|--------|--------|--------|---------------------|
-| First molars erupted? | | Verified (Pano+Photo) | |
-| Permanent incisors erupted? | | Verified (Pano+Photo) | |
+| Factor | Status | Source | Ready? |
+| First molars erupted? | | Verified/Pano/Photo | |
+| Permanent incisors erupted? | | | |
 | Canine position | | Pano (root) + Photo (clinical) | |
-| Second molars | | Pano (development stage) | |
-| Premolars/deciduous molars | | Both | |
-| Root development | | Pano only | |
+| Second molars | | Pano (development) | |
+| Premolars / deciduous molars | | Both | |
 
 **Recommendation:**
-
-☐ Ready to start comprehensive treatment now
+☐ Ready for comprehensive treatment now
 ☐ Early/interceptive treatment indicated (Phase 1)
-☐ Monitor and recall in [X] months — await [specific milestone]
+☐ Monitor and recall in [X] months
 ☐ Urgent intervention needed
 
-**Rationale:** [1-2 sentences explaining the recommendation]
+**Rationale:** [1-2 sentences]
 
 ---
 
-### 📊 CASE COMPLEXITY INDICATORS
+### 📊 CASE COMPLEXITY
 
-**Complexity Level:** [Low / Moderate / High]
+**Level:** [Low / Moderate / High]
 
-**Skeletal & Dental Factors:**
+**Skeletal & Dental:**
+| Factor | Finding | Source | Impact |
+[Missing teeth, impacted/ectopic, supernumerary, root anomalies, restorations, pathology]
 
-| Factor | Finding | Source | Impact on Treatment |
-|--------|---------|--------|---------------------|
-| Missing teeth | | Pano | |
-| Impacted/ectopic teeth | | Pano | |
-| Supernumerary teeth | | Pano | |
-| Root anomalies | | Pano | |
-| Large restorations | | Verified | |
-| Pathology | | Pano | |
-
-**Occlusion Factors (from photos):**
-
+**Occlusion (from photos):**
 | Factor | Finding | Impact |
-|--------|---------|--------|
-| Molar classification | | |
-| Overjet | | |
-| Overbite | | |
-| Crossbite | | |
-| Midline deviation | | |
-| Crowding (upper) | | |
-| Crowding (lower) | | |
-| Arch form | | |
+[Molar class, overjet, overbite, crossbite, midlines, crowding upper/lower, arch form]
 
 **Space Analysis:**
-- Upper arch: [Crowded / Adequate / Spaced] — Source: Photos + Pano
-- Lower arch: [Crowded / Adequate / Spaced] — Source: Photos + Pano
-- Leeway space available: [Yes / No] — Source: Pano (deciduous molar status)
+- Upper arch: [Crowded / Adequate / Spaced]
+- Lower arch: [Crowded / Adequate / Spaced]
+- Leeway space: [Available / Compromised / Not available]
 
 ---
 
-### 📷 ADDITIONAL IMAGING RECOMMENDATIONS
+### 📷 ADDITIONAL IMAGING
 
 | Imaging | Indicated? | Reason |
-|---------|------------|--------|
-| CBCT | ☐ Now / ☐ Conditional / ☐ No | |
-| Cephalometric | ☐ Recommended / ☐ Not needed | |
-| Periapical radiographs | ☐ Yes [which teeth] / ☐ No | |
-| Repeat panoramic | ☐ In [X] months / ☐ Not needed | |
+| CBCT | Now / Conditional / No | |
+| Cephalometric | Recommended / Not needed | |
+| Periapical | Yes [teeth] / No | |
+| Repeat pano | In [X] months / Not needed | |
 
 ---
 
-### 👨‍👩‍👧 PARENT COMMUNICATION POINTS
+### 👨‍👩‍👧 PARENT COMMUNICATION
 
-Write in plain language. No FDI notation. No clinical jargon.
+Write in plain language. No FDI notation. No jargon.
 
 **1. Development Status:**
-"Your child is in [stage] with [X] baby teeth still present. This is
-[normal/advanced/delayed] for their age."
+"Your child is in [stage] with [X] baby teeth remaining. This is [normal/advanced/delayed] for their age."
 
 **2. Treatment Timing:**
-"[We recommend starting/waiting because...]"
+"[We recommend... because...]"
 
 **3. Things We're Monitoring:**
-"[Describe in parent-friendly terms]"
+"[In parent-friendly terms]"
 
 **4. Treatment Preview:**
-"Based on this screening, treatment would likely involve [description]
-lasting approximately [duration]."
+"Based on this screening, treatment would likely involve [description] lasting approximately [duration]."
 
 **5. Next Steps:**
-"[Specific actions — schedule records, return in X months, referral, etc.]"
+"[Specific actions]"
 
-**Common Parent Questions:**
-
+**Common Questions:**
 | Question | Response |
-|----------|----------|
-| "Will my child need teeth pulled?" | [Based on findings: unlikely / possible / likely — explain why] |
-| "Will they need jaw surgery?" | [Cannot fully determine from screening; ceph needed / unlikely based on photos] |
-| "What about wisdom teeth?" | [Current status in plain language] |
-| "How long will braces take?" | [Estimated range based on complexity] |
-| "When should we start?" | [Specific timing recommendation with reason] |
+| Will they need teeth pulled? | |
+| Jaw surgery? | |
+| Wisdom teeth? | |
+| How long will braces take? | |
+| When should we start? | |
 
 ---
 
-### 📋 DETAILED FINDINGS — Technical Reference
+### 📋 DETAILED FINDINGS (Technical Reference)
 
 **Verified Tooth Inventory:**
-
 | Category | Teeth (FDI) | Confidence |
-|----------|-------------|------------|
 | Present & Erupted | | VERIFIED |
 | Developing/Unerupted | | HIGH (Pano) |
 | Absent (no development) | | HIGH (Pano) |
-| Absent (extraction signs) | | [level] |
+| Premature deciduous loss | | [level] |
 | Deciduous Retained | | VERIFIED |
 
-**Verified Restorations:**
+**Restorations:**
+| Tooth | Type | Pano Said | Photos Said | Final | Confidence |
 
-| Tooth | Type | Pano Finding | Photo Finding | Confidence |
-|-------|------|-------------|---------------|------------|
-| | | | | VERIFIED / HIGH / CONFLICTED |
+**Third Molars:**
+| Tooth | Status | Source |
+| 18 | | Pano |
+| 28 | | Pano |
+| 38 | | Pano |
+| 48 | | Pano |
 
-**Third Molar Status:**
-
-| Tooth | Status | Stage | Source | Note |
-|-------|--------|-------|--------|------|
-| 18 | | | Pano | |
-| 28 | | | Pano | |
-| 38 | | | Pano | |
-| 48 | | | Pano | |
-
-**Occlusion Summary (Photos):**
-
+**Occlusion (Photos):**
 | Measurement | Finding |
-|-------------|---------|
-| Molar relationship R | |
-| Molar relationship L | |
-| Canine relationship R | |
-| Canine relationship L | |
-| Overjet | |
-| Overbite | |
-| Upper midline | |
-| Lower midline | |
-| Crossbite | |
-| Upper crowding | |
-| Lower crowding | |
-| Upper arch form | |
-| Lower arch form | |
-
-**Appliances:**
-
-| Appliance | Location | Pano Confirmed | Photo Confirmed | Status |
-|-----------|----------|---------------|-----------------|--------|
-| | | | | VERIFIED |
+[Molar R/L, Canine R/L, Overjet, Overbite, Midlines, Crossbite, Crowding, Arch form]
 
 ---
 
 ### ⚠️ LIMITATIONS & VERIFICATION NEEDED
 
-Clinical checks required:
-- [ ] [Specific item needing hands-on verification]
-- [ ] [Item that imaging couldn't resolve]
-- [ ] Patient/parent history confirmation for [specific items]
+[ ] [Clinical checks needed]
+[ ] [Items imaging couldn't resolve]
 
-**Findings from pano only (not photo-verifiable):**
-- [List items like developing teeth, root stages, pathology]
+**Pano-only findings (not photo-verifiable):** [list]
+**Photo-only findings (not pano-verifiable):** [list]
 
-**Findings from photos only (not pano-verifiable):**
-- [List items like occlusion, hygiene, soft tissue]
-
-**Multi-modal confidence statement:**
-[X] of [Y] key findings were cross-validated between pano and photos.
-[Z] discrepancies were identified and resolved using the resolution
-hierarchy. Overall analysis reliability: [HIGH / MODERATE / requires
-additional clinical input].
+**Cross-validation:** [X] of [Y] findings verified. [Z] discrepancies resolved. Reliability: [HIGH/MODERATE].
 
 ---
 
-### REPORT METADATA
-
-- Analysis version: OST v5.0 Multi-Modal (2-Call Pipeline)
-- Call 1: Panoramic analysis
-- Call 2: Photo analysis + Cross-validation + Report generation
-- Images analyzed: 1 panoramic + {{NUM_PHOTOS}} intraoral photographs
-- Cross-validations performed: [X] findings compared
-- Discrepancies found: [X] (all resolved)
-- Generated: {{TIMESTAMP}}
+**Analysis:** OST v5.0 | **Images:** 1 pano + {{NUM_PHOTOS}} photos | **Generated:** {{TIMESTAMP}}
 
 **Verified by:** _______________________ (Clinician Signature)
 
-*This report is an AI-assisted screening aid and does not replace clinical
-judgment. All findings require verification by the treating orthodontist.*
-
----
-
-## INTERNAL NOTES (for AI model, not included in report)
-
-**What photos CANNOT show — do not attempt to assess:**
-- Unerupted/developing teeth
-- Root development stages
-- Bone levels or pathology
-- Mandibular canal proximity
-- Third molar status (in adolescents)
-
-**What pano CANNOT show — do not claim from pano alone:**
-- Occlusal relationships (Class I/II/III)
-- Tooth color or surface texture
-- Gingival health or soft tissue
-- Crossbites
-- Precise crowding severity
-- Oral hygiene status
-
-**Bias prevention:**
-You analyzed photos FIRST (Step A) before seeing pano results (Step B).
-If your photo findings changed after seeing pano results, flag this as
-a potential confirmation bias concern.`;
+*This report is an AI-assisted screening aid and does not replace clinical judgment.*`;
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // Helper: Extract PANO_SUMMARY from Call 1 response
